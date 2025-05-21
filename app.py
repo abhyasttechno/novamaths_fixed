@@ -79,7 +79,7 @@ CORS(app, resources={r"/solve-math": {"origins": "*"}, r"/clarify-step": {"origi
 # --- Hardcoding keys like this is insecure and should only be for quick local testing ---
 
 
-API_KEY = os.environ.get('GEMINI_API_KEY')
+# API_KEY = os.environ.get('GEMINI_API_KEY')
 os.environ['GOOGLE_API_KEY'] = API_KEY
 client = None # Initialize as None
 
@@ -136,12 +136,12 @@ def ama():
 
 
 # --- Helper Function to Build Prompt Parts (REVISED) ---
+# --- Helper Function to Build Prompt Parts (REVISED) ---
 def build_math_prompt_parts(problem_text=None, uploaded_gemini_file=None):
     """
     Builds the list of 'Part' objects for the Gemini API math solver.
     Returns a list containing one text Part and optionally one file Part.
     """
-    # Combine all instructional text and user problem text into one string
     instructional_text = """You are MathMind AI, an expert AI Math Tutor.
 Your goal is to provide clear, accurate, and step-by-step solutions to math problems.
 Format the output using Markdown.
@@ -149,16 +149,44 @@ Use '### Step X:' for each step heading (e.g., '### Step 1:', '### Step 2:'). St
 Use '### Final Answer:' for the final result section.
 Use LaTeX notation enclosed in single dollar signs ($...$) for inline math and double dollar signs ($$...$$) for display math equations. This ensures compatibility with MathJax rendering on the web.
 Explain the reasoning behind each step clearly and concisely.
+
+NEW DIAGRAM INSTRUCTIONS:
+If a step requires a diagram for clear explanation (e.g., geometry, graphs, vectors):
+1.  First, describe the diagram in text as part of the step's explanation.
+2.  Then, IMMEDIATELY AFTER the textual description of the diagram within the same step, embed the diagram data using a special tag:
+    
+    <DIAGRAM_SVG_DATA>
+    {
+      "viewBox": "0 0 200 150", // Example: min-x, min-y, width, height for coordinate system
+      "elements": [
+        // For a line:
+        { "type": "line", "x1": 10, "y1": 10, "x2": 100, "y2": 100, "stroke": "black", "strokeWidth": 2 },
+        // For a circle:
+        { "type": "circle", "cx": 50, "cy": 50, "r": 20, "stroke": "blue", "fill": "lightblue" },
+        // For text/label:
+        { "type": "text", "x": 10, "y": 25, "text": "Point A", "fill": "red", "fontSize": "10px" },
+        // For a rectangle:
+        { "type": "rect", "x": 10, "y": 10, "width": 50, "height": 30, "stroke": "green", "fill": "lightgreen" },
+        // For a path (more complex shapes):
+        { "type": "path", "d": "M10 80 Q 52.5 10, 95 80 T 180 80", "stroke": "purple", "fill": "none" }
+        // Add other elements as needed (e.g., polygons, ellipses)
+      ]
+    }
+    </DIAGRAM_SVG_DATA>
+3.  Ensure the JSON inside <DIAGRAM_SVG_DATA> is valid. Use simple coordinates. The viewBox defines the drawing area; keep coordinates within this box.
+4.  Do NOT generate actual <svg>...</svg> tags. Only provide the data within <DIAGRAM_SVG_DATA>.
+5.  Continue with the rest of the step's explanation after the </DIAGRAM_SVG_DATA> tag if necessary.
+
 If the input (text or file) is ambiguous, unclear, or not a math problem, state that politely and ask for clarification instead of guessing or providing an irrelevant solution.
 If a file is provided, analyze the content of the file (image or PDF) to identify the math problem.
 
 ---
 Problem Details:
 """
-
-    # Add user's text input to the combined string
+    # ... (rest of the function remains the same)
     if problem_text and not uploaded_gemini_file:
         instructional_text += f"\nText Input: {problem_text}"
+    # ... and so on for file input and the closing part of the prompt.
     else:
         instructional_text += "\nText Input: None provided."
 
@@ -191,7 +219,6 @@ Problem Details:
             parts.append(types.Part.from_text("(Error: Could not properly attach file content for analysis due to an internal issue.)"))
 
     return parts
-
 # --- Helper Function to Build Prompt Parts (REVISED) ---
 def build_check_prompt_parts(problem_text=None, uploaded_gemini_file=None):
     """
