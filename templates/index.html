@@ -163,7 +163,25 @@
             border-bottom: none;
         }
 
+/* ... existing styles ... */
 
+/* NEW: Styles for the SVG diagram container */
+.solution-diagram-container {
+    width: 100%;
+    margin: 15px 0; /* Add some space around the diagram */
+    padding: 0;
+    overflow: hidden; /* Important to prevent scrollbars if SVG is slightly off */
+    border: 1px solid #ddd; /* Optional border */
+    border-radius: 4px;
+    background-color: #fdfdfd; /* Light background for the diagram */
+}
+
+.solution-diagram-container svg {
+    display: block; /* Removes extra space below inline SVG */
+    width: 100%;
+    height: auto; /* Maintain aspect ratio based on viewBox */
+    max-height: 400px; /* Optional: constrain max height */
+}
     /* Card adjustments */
 .card {
     border: none !important;
@@ -2019,49 +2037,165 @@ function updateSolveButtonState() {
      }
 }
 
+// --- NEW: Function to render SVG diagram from data ---
+function renderDiagramFromData(diagramData) {
+    if (!diagramData || !diagramData.viewBox || !diagramData.elements) {
+        console.error("Invalid diagram data received:", diagramData);
+        return null; // Return null or an empty string if data is invalid
+    }
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svgElement = document.createElementNS(svgNS, "svg");
+    svgElement.setAttribute("viewBox", diagramData.viewBox);
+    // svgElement.setAttribute("width", "100%"); // Let CSS handle this
+    // svgElement.setAttribute("height", "auto"); // Let CSS handle this
+    svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet"); // Good for responsive scaling
+
+    diagramData.elements.forEach(el => {
+        let svgChild;
+        switch (el.type) {
+            case "line":
+                svgChild = document.createElementNS(svgNS, "line");
+                svgChild.setAttribute("x1", el.x1);
+                svgChild.setAttribute("y1", el.y1);
+                svgChild.setAttribute("x2", el.x2);
+                svgChild.setAttribute("y2", el.y2);
+                svgChild.setAttribute("stroke", el.stroke || "black");
+                svgChild.setAttribute("stroke-width", el.strokeWidth || 1);
+                if (el.strokeDasharray) svgChild.setAttribute("stroke-dasharray", el.strokeDasharray);
+                break;
+            case "circle":
+                svgChild = document.createElementNS(svgNS, "circle");
+                svgChild.setAttribute("cx", el.cx);
+                svgChild.setAttribute("cy", el.cy);
+                svgChild.setAttribute("r", el.r);
+                svgChild.setAttribute("stroke", el.stroke || "black");
+                svgChild.setAttribute("stroke-width", el.strokeWidth || 1);
+                svgChild.setAttribute("fill", el.fill || "none");
+                break;
+            case "rect":
+                svgChild = document.createElementNS(svgNS, "rect");
+                svgChild.setAttribute("x", el.x);
+                svgChild.setAttribute("y", el.y);
+                svgChild.setAttribute("width", el.width);
+                svgChild.setAttribute("height", el.height);
+                svgChild.setAttribute("stroke", el.stroke || "black");
+                svgChild.setAttribute("stroke-width", el.strokeWidth || 1);
+                svgChild.setAttribute("fill", el.fill || "none");
+                if (el.rx) svgChild.setAttribute("rx", el.rx); // For rounded corners
+                if (el.ry) svgChild.setAttribute("ry", el.ry);
+                break;
+            case "text":
+                svgChild = document.createElementNS(svgNS, "text");
+                svgChild.setAttribute("x", el.x);
+                svgChild.setAttribute("y", el.y);
+                svgChild.setAttribute("fill", el.fill || "black");
+                svgChild.setAttribute("font-size", el.fontSize || "10px");
+                if (el.fontFamily) svgChild.setAttribute("font-family", el.fontFamily);
+                if (el.textAnchor) svgChild.setAttribute("text-anchor", el.textAnchor); // e.g., "middle"
+                if (el.dominantBaseline) svgChild.setAttribute("dominant-baseline", el.dominantBaseline); // e.g., "middle"
+                svgChild.textContent = el.text;
+                break;
+            case "path":
+                svgChild = document.createElementNS(svgNS, "path");
+                svgChild.setAttribute("d", el.d);
+                svgChild.setAttribute("stroke", el.stroke || "black");
+                svgChild.setAttribute("stroke-width", el.strokeWidth || 1);
+                svgChild.setAttribute("fill", el.fill || "none");
+                if (el.strokeLinecap) svgChild.setAttribute("stroke-linecap", el.strokeLinecap);
+                if (el.strokeLinejoin) svgChild.setAttribute("stroke-linejoin", el.strokeLinejoin);
+                break;
+            // Add more cases for other shapes like 'polygon', 'polyline', 'ellipse' if needed
+            default:
+                console.warn("Unsupported SVG element type:", el.type);
+        }
+        if (svgChild) {
+            svgElement.appendChild(svgChild);
+        }
+    });
+
+    // Wrap the SVG in a container div for styling
+    const containerDiv = document.createElement('div');
+    containerDiv.className = 'solution-diagram-container';
+    containerDiv.appendChild(svgElement);
+    return containerDiv; // Return the container div
+}
 // --- NEW: Function to parse and store solution steps ---
+// --- MODIFIED: Function to parse and store solution steps, including diagrams ---
+
+// --- MODIFIED: Function to parse and store solution steps, including diagrams ---
 function parseAndStoreSolutionSteps(solutionText) {
     currentSolutionStepsArray = []; // Reset
     if (!solutionText) return;
 
-    let formattedSteps = solutionText.trim()
-        .split('\n')
-        .filter(line => line.trim() !== '')
-        .join('\n');
+    // Regex to find diagram data blocks
+    const diagramRegex = /<DIAGRAM_SVG_DATA>([\s\S]*?)<\/DIAGRAM_SVG_DATA>/g;
 
-    // This regex ensures we capture "Step X:" or "Final Answer:" along with their content
-    // It looks for "### " followed by "Step " and a number, or "Final Answer", then ":"
-    // and captures everything until the next similar pattern or end of string.
+    // Split by step delimiters first
     const stepSplitRegex = /(?=### (?:Step \d+|Final Answer):)/;
-
-    formattedSteps = formattedSteps
-        .split(stepSplitRegex) // Split by the lookahead assertion
+    let rawSteps = solutionText.trim().split(stepSplitRegex)
         .map(part => part.trim())
-        .filter(part => part.length > 0) // Remove empty parts
-        .map((part) => {
-            let stepHtml = '';
-            if (part.startsWith('### Step ')) {
-                const match = part.match(/^### Step (\d+):([\s\S]*)/);
-                if (match) {
-                    const stepNum = match[1];
-                    const stepContent = match[2].trim();
-                    stepHtml = `<div class="step interactive-step fade-in" data-step-number="${stepNum}" style="cursor: pointer;" title="Click to clarify this step"><h5>Step ${stepNum}:</h5><div class="step-content">${stepContent}</div></div>`;
-                }
-            } else if (part.startsWith('### Final Answer:')) {
-                const finalContent = part.substring('### Final Answer:'.length).trim();
-                stepHtml = `<div class="final-answer fade-in"><strong>Final Answer:</strong><div class="final-answer-content">${finalContent}</div></div>`;
-            } else {
-                // This case should ideally not happen if the input format is strictly "### Step X:" or "### Final Answer:"
-                // But as a fallback, wrap unrecognized parts in a paragraph.
-                stepHtml = `<p>${part}</p>`;
-            }
-            // Basic markdown (bold, italic) - keep this transformation here
-            stepHtml = stepHtml.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
-            return stepHtml;
-        });
-    currentSolutionStepsArray = formattedSteps;
-}
+        .filter(part => part.length > 0);
 
+    currentSolutionStepsArray = rawSteps.map((part) => {
+        let stepHtmlContent = '';
+        let stepHeader = '';
+        let diagramContainerHtml = ''; // To hold rendered diagram HTML
+
+        // Extract step header (Step X or Final Answer)
+        if (part.startsWith('### Step ')) {
+            const match = part.match(/^(### Step \d+:)([\s\S]*)/);
+            if (match) {
+                stepHeader = `<h5>${match[1].replace('### ', '')}</h5>`;
+                stepHtmlContent = match[2].trim();
+            }
+        } else if (part.startsWith('### Final Answer:')) {
+            const match = part.match(/^(### Final Answer:)([\s\S]*)/);
+            if (match) {
+                stepHeader = `<strong>${match[1].replace('### ', '')}</strong>`;
+                stepHtmlContent = match[2].trim();
+            }
+        } else {
+            stepHtmlContent = part; // Fallback for content without standard header
+        }
+
+        // Process for diagrams WITHIN the current stepHtmlContent
+        let processedContent = stepHtmlContent.replace(diagramRegex, (match, jsonDataString) => {
+            try {
+                const diagramData = JSON.parse(jsonDataString.trim());
+                const diagramElement = renderDiagramFromData(diagramData); // This now returns a DIV
+                if (diagramElement) {
+                    diagramContainerHtml += diagramElement.outerHTML; // Accumulate diagram HTML
+                    return ''; // Remove the <DIAGRAM_SVG_DATA> block from text content
+                }
+            } catch (e) {
+                console.error("Error parsing diagram JSON or rendering SVG:", e, "\nJSON data:", jsonDataString);
+                return `<p class="text-danger">Error displaying diagram: Malformed data.</p>`; // Replace with error
+            }
+            return ''; // Remove if error or no diagram
+        });
+
+        // Basic markdown (bold, italic) on the remaining text content
+        processedContent = processedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+        // Construct the final HTML for the step
+        let finalStepHtml = '';
+        if (part.startsWith('### Step ')) {
+            finalStepHtml = `<div class="step interactive-step fade-in" data-step-number="${part.match(/Step (\d+)/)[1]}" style="cursor: pointer;" title="Click to clarify this step">
+                                 ${stepHeader}
+                                 <div class="step-content">${processedContent}${diagramContainerHtml}</div>
+                             </div>`;
+        } else if (part.startsWith('### Final Answer:')) {
+            finalStepHtml = `<div class="final-answer fade-in">
+                                 ${stepHeader}
+                                 <div class="final-answer-content">${processedContent}${diagramContainerHtml}</div>
+                             </div>`;
+        } else {
+            finalStepHtml = `<p>${processedContent}${diagramContainerHtml}</p>`; // Fallback for unstructured parts
+        }
+        return finalStepHtml;
+    });
+}
 // --- NEW: Function to render solution steps based on mode ---
 function renderSolutionSteps(mode) {
     if (!solutionOutput || currentSolutionStepsArray.length === 0) {
