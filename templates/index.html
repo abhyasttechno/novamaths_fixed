@@ -1,0 +1,2840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Maths - Your AI math buddy — anytime, anywhere</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <!-- Custom Fonts (Optional, using Google Fonts for a corporate feel) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <!-- MathJax Library -->
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Using the custom font */
+            background-color: #f4f7f9; /* Slightly more inviting light background */
+            color: #333; /* Darker text for readability */
+            overflow-x: hidden; /* Prevent horizontal scroll issues */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #1a2b4a; /* Corporate blue-grey for headings */
+            font-weight: 600;
+        }
+
+        /* Navbar Enhancements */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            background-color: #ffffff;
+            transition: background-color 0.3s ease-in-out;
+        }
+         .navbar-brand {
+            font-weight: 700;
+            color: #1a2b4a !important; /* Match headings */
+        }
+        .nav-link {
+            color: #556b8d !important; /* Muted link color */
+            transition: color 0.3s ease-in-out;
+        }
+        .nav-link:hover {
+            color: #007bff !important; /* Primary color on hover */
+        }
+         .navbar .btn-outline-primary {
+             border-radius: 25px;
+             padding: 8px 20px;
+             font-weight: 500;
+         }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(45deg, #007bff 0%, #00c6ff 100%); /* Brighter, more dynamic gradient */
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative; /* Needed for pseudo-elements or shapes */
+            overflow: hidden; /* Hide potential overflow from shapes */
+        }
+         .hero::before {
+             content: '';
+             position: absolute;
+             top: -100px;
+             left: -100px;
+             width: 300px;
+             height: 300px;
+             background: rgba(255, 255, 255, 0.1);
+             border-radius: 50%;
+             animation: moveShape 8s infinite linear;
+         }
+         .hero::after {
+             content: '';
+             position: absolute;
+             bottom: -150px;
+             right: -150px;
+             width: 400px;
+             height: 400px;
+             background: rgba(255, 255, 255, 0.08);
+             border-radius: 50%;
+             animation: moveShape 10s infinite reverse linear;
+         }
+         @keyframes moveShape {
+             0% { transform: translate(0, 0); }
+             50% { transform: translate(20px, 20px); }
+             100% { transform: translate(0, 0); }
+         }
+
+
+        .hero h1 {
+            font-weight: 700;
+            font-size: 3.5rem; /* Larger heading */
+            margin-bottom: 15px;
+            color: white; /* Ensure heading is white */
+        }
+        .hero p {
+            font-size: 1.4rem; /* Larger subtitle */
+            margin-bottom: 30px;
+            opacity: 0.9; /* Slightly transparent */
+        }
+         .hero .btn-primary {
+             padding: 12px 30px;
+             font-size: 1.1rem;
+             border-radius: 30px;
+             background-color: #ffffff;
+             color: #007bff;
+             border: none;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+             transition: all 0.3s ease;
+         }
+         .hero .btn-primary:hover {
+             background-color: #e9ecef;
+             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+             transform: translateY(-2px);
+         }
+
+
+        /* Section Styling */
+        section {
+             padding: 60px 0; /* Consistent vertical padding */
+             margin-bottom: 40px; /* Spacing between sections */
+        }
+         section:nth-of-type(odd) { /* Optional: slightly different background for sections */
+             background-color: #eef2f6;
+         }
+         section h2 {
+             text-align: center;
+             margin-bottom: 40px;
+             font-size: 2.5rem;
+             color: #1a2b4a;
+         }
+
+         .loading-spinner {
+    display: none; /* This hides the spinner span */
+}
+        /* Card Enhancements */
+     
+        .card-header {
+            background-color: #d4e2f0; /* Light blue-grey header */
+            font-weight: 700;
+            color: #1a2b4a;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+
+
+    /* Card adjustments */
+.card {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+/* Card body adjustments */
+.card-body {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+}
+
+.unified-input-bar textarea {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    resize: none;
+    overflow-y: hidden;
+    line-height: 1.6;
+    padding: 10px 12px;
+    font-size: 1rem;
+    flex-grow: 1;
+    margin: 0 8px;
+    border-radius: 25px; /* 👈 This gives it a curved border */
+}
+
+/* Optional: add a light background and a soft shadow to enhance look */
+.unified-input-bar {
+    background-color: #f8f9fa; /* Slightly off-white */
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    border-radius: 30px; /* Make the whole input bar rounded */
+}
+
+
+    .unified-input-bar .btn-icon {
+         background-color: transparent; /* Transparent background */
+         border: none;
+         color: #6c757d; /* Muted icon color */
+         padding: 5px; /* Adjust padding for icons */
+         width: 35px; /* Fixed size for rounded button */
+         height: 35px; /* Fixed size for rounded button */
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         transition: color 0.2s ease, background-color 0.2s ease;
+         flex-shrink: 0; /* Prevent shrinking */
+     }
+     .unified-input-bar .btn-icon:hover {
+         color: #333; /* Darker on hover */
+         background-color: #e9ecef; /* Light background on hover */
+     }
+     .unified-input-bar .btn-icon:active {
+         background-color: #ced4da; /* Darker on active */
+     }
+      /* Styles for the Send Button */
+     .unified-input-bar .btn-primary {
+         background-color: #007bff; /* Bootstrap primary blue */
+         border-color: #007bff;
+         color: white;
+         padding: 5px; /* Adjust padding for icons */
+         width: 35px; /* Fixed size for rounded button */
+         height: 35px; /* Fixed size for rounded button */
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         flex-shrink: 0; /* Prevent shrinking */
+     }
+     .unified-input-bar .btn-primary:hover {
+         background-color: #0056b3;
+         border-color: #004085;
+     }
+      .unified-input-bar .btn-primary:active {
+         background-color: #003f7f;
+         border-color: #002a5d;
+     }
+            /* Specific style for the Send button (up arrow) */
+     #solveUnifiedButton {
+        background: #007bff; /* Primary blue */
+        color: white;
+        border: none;
+        border-radius: 50%; /* Make it round */
+        width: 40px; /* Larger round button */
+        height: 40px; /* Larger round button */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 5px; /* Space from previous icon */
+        transition: background-color 0.2s ease, opacity 0.2s ease;
+        flex-shrink: 0; /* Prevent shrinking */
+     }
+     #solveUnifiedButton:hover {
+         background-color: #0056b3; /* Darker blue on hover */
+     }
+     #solveUnifiedButton:disabled {
+         opacity: 0.5;
+         cursor: not-allowed;
+         background-color: #aebecd; /* Muted color when disabled */
+     }
+
+     /* Style for the recording voice button */
+     #startSpeechButton {
+         color: #6c757d; /* Default color */
+     }
+     #startSpeechButton.recording {
+          color: white;
+          background-color: #dc3545; /* Red when recording */
+     }
+    #startSpeechButton.recording:hover {
+         background-color: #c82333;
+    }
+
+    /* Style for the file info text below */
+     #selectedFileInfo {
+         font-size: 0.85rem;
+         color: #555;
+         padding: 5px 20px; /* Adjust padding to align below the bar */
+         margin-top: 5px;
+     }
+     /* Style for the remove file link */
+     #selectedFileInfo .clear-file {
+         text-decoration: none;
+         font-weight: 500;
+     }
+     #selectedFileInfo .clear-file:hover {
+          text-decoration: underline;
+     }
+
+        /* Solution Output Styles */
+        #solutionOutput {
+             background-color: #ffffff;
+             border: 1px solid #cfe2ff; /* Light primary border */
+             border-radius: 0.375rem;
+             padding: 25px; /* More padding */
+             min-height: 150px;
+             white-space: pre-wrap;
+             font-family: sans-serif;
+             line-height: 1.7; /* Increased line height */
+             overflow-x: auto;
+             position: relative; /* For copy button positioning */
+        }
+         #solutionOutput::before { /* Optional: Add a subtle badge */
+             content: 'AI Solution';
+             position: absolute;
+             top: 10px;
+             right: 10px;
+             background-color: rgba(0, 123, 255, 0.1);
+             color: #007bff;
+             font-size: 0.8em;
+             padding: 3px 8px;
+             border-radius: 15px;
+             font-weight: 500;
+         }
+
+        #solutionOutput .step {
+            margin-bottom: 20px; /* More space between steps */
+            padding: 15px; /* Padding inside step box */
+            border: 1px solid #e9ecef; /* Subtle border around step */
+            border-left: 5px solid #007bff; /* Primary color left border */
+            border-radius: 5px;
+            background-color: #f8f9fa; /* Light background for step */
+            transition: all 0.3s ease; /* Transition on hover */
+            cursor: pointer;
+        }
+        #solutionOutput .step:last-child { border-bottom: none; margin-bottom: 0; }
+        #solutionOutput .interactive-step:hover {
+            background-color: #eef5ff; /* Lighter blue on hover */
+            border-color: #cce5ff; /* Lighter primary border on hover */
+            transform: translateY(-3px); /* Slight lift effect */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        #solutionOutput h5 {
+            color: #007bff; /* Primary color for step numbers */
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 10px;
+             padding-left: 0; /* Remove left padding */
+             border-bottom: 1px solid #eef; /* Separator below step title */
+             padding-bottom: 8px;
+             font-size: 1.2rem;
+        }
+        #solutionOutput .step-content, #solutionOutput .final-answer-content {
+             white-space: normal;
+             font-family: sans-serif;
+             line-height: 1.7;
+             color: #333;
+             margin-top: 10px; /* Space below step title */
+        }
+         #solutionOutput .final-answer {
+            font-weight: bold;
+            margin-top: 25px; /* More space above final answer */
+            padding: 15px;
+            background-color: #d1e7dd; /* Green for success */
+            border-left: 5px solid #198754; /* Darker green border */
+            border-radius: 5px;
+            white-space: normal;
+            font-family: sans-serif;
+            line-height: 1.7;
+         }
+         #copySolutionButton {
+             border-radius: 20px;
+             font-size: 0.9em;
+             padding: 5px 15px;
+         }
+
+        /* Modal Styles */
+        #modalStepContent {
+             font-family: 'Inter', sans-serif; /* Consistent font in modal */
+             white-space: pre-wrap;
+             line-height: 1.7;
+        }
+        #clarificationOutput {
+             white-space: pre-wrap;
+             font-family: 'Inter', sans-serif;
+             line-height: 1.7;
+             color: #333;
+        }
+         #clarificationQuestion {
+             border-radius: 8px;
+         }
+         #submitClarificationButton {
+              background: linear-gradient(45deg, #17a2b8 0%, #17a2b8 100%); /* Info/secondary gradient */
+              border: none;
+              border-radius: 25px;
+              padding: 8px 20px;
+              font-weight: 600;
+              transition: all 0.3s ease;
+         }
+         #submitClarificationButton:hover {
+             background: linear-gradient(45deg, #138496 0%, #138496 100%);
+         }
+         #submitClarificationButton:disabled {
+             opacity: 0.7;
+             cursor: not-allowed;
+             background: linear-gradient(45deg, #a9b9c8 0%, #c9d6e3 100%);
+         }
+
+
+        /* Practice Problems Section Styles */
+        #practice-problems-section {
+             /* Managed by JS show/hide */
+             margin-top: 40px; /* Consistent spacing */
+             margin-bottom: 60px;
+        }
+        #practice-controls {
+             display: flex;
+             align-items: center;
+             gap: 20px; /* More spacing */
+             background-color: #d4e2f0; /* Match card header */
+             padding: 20px;
+             border-radius: 8px;
+             margin-bottom: 20px;
+             flex-wrap: wrap;
+        }
+         #practice-controls label {
+              font-weight: 600;
+              color: #1a2b4a;
+         }
+         #practiceProblemSlider {
+              flex-grow: 1;
+              background: #aebecd; /* Muted slider background */
+              max-width: 300px;
+              cursor: pointer;
+         }
+         #practiceProblemSlider::-webkit-slider-thumb {
+             -webkit-appearance: none;
+             appearance: none;
+             width: 20px;
+             height: 20px;
+             background: #007bff; /* Primary color thumb */
+             border-radius: 50%;
+             cursor: pointer;
+             border: 3px solid #fff; /* White ring */
+             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+             margin-top: -7px; /* Center vertically */
+         }
+          #practiceProblemSlider::-moz-range-thumb {
+             width: 20px;
+             height: 20px;
+             background: #007bff;
+             border-radius: 50%;
+             cursor: pointer;
+             border: 3px solid #fff;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          }
+
+
+        #practiceProblemCount {
+             font-weight: 700;
+             min-width: 25px;
+             text-align: right;
+             color: #1a2b4a;
+        }
+        #generatePracticeButton {
+             background: linear-gradient(45deg, #28a745 0%, #20c997 100%); /* Success gradient */
+             border: none;
+             border-radius: 25px;
+             padding: 10px 25px;
+             font-weight: 600;
+             transition: all 0.3s ease;
+        }
+         #generatePracticeButton:hover {
+            background: linear-gradient(45deg, #20c997 0%, #28a745 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+         }
+         #generatePracticeButton:disabled {
+             opacity: 0.7;
+             cursor: not-allowed;
+             background: linear-gradient(45deg, #a9b9c8 0%, #c9d6e3 100%);
+         }
+
+        #practice-problems-output {
+             background-color: #ffffff;
+             border: 1px solid #d1e7dd; /* Light success border */
+             border-radius: 0.375rem;
+             padding: 10px;
+             min-height: 100px;
+             
+             font-family: sans-serif;
+             line-height: 1.7;
+        }
+         #practice-loading { /* Keep existing */
+             text-align: center;
+             padding: 20px;
+             color: #6c757d;
+         }
+
+
+        /* Features Section */
+        .feature-icon {
+             font-size: 1.8rem; /* Larger icons */
+             margin-right: 15px;
+             vertical-align: middle;
+             color: #007bff; /* Primary color */
+        }
+         .accordion-button {
+             font-weight: 600;
+             color: #1a2b4a;
+             transition: color 0.3s ease;
+         }
+         .accordion-button:hover {
+             color: #007bff;
+         }
+         .accordion-button:not(.collapsed) {
+             color: #007bff; /* Primary color when active */
+             background-color: #eef5ff; /* Light primary background */
+             box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+         }
+         .accordion-body {
+             line-height: 1.7;
+             color: #555;
+         }
+
+
+        /* Concepts Library Section */
+        #concepts-library h3 {
+             margin-bottom: 20px;
+             color: #1a2b4a;
+             font-size: 1.8rem;
+             font-weight: 600;
+        }
+         #concepts-library .nav-tabs {
+             border-bottom: 2px solid #007bff; /* Primary color border */
+             margin-bottom: 30px;
+         }
+         #concepts-library .nav-link {
+             border: none;
+             border-bottom: 3px solid transparent;
+             color: #556b8d;
+             font-weight: 600;
+             margin-right: 15px;
+             transition: all 0.3s ease;
+         }
+         #concepts-library .nav-link:hover {
+             border-color: #aebecd;
+             color: #1a2b4a;
+         }
+         #concepts-library .nav-link.active {
+             color: #007bff;
+             border-color: #007bff;
+             background-color: transparent;
+         }
+         #concepts-library .accordion-item {
+             margin-bottom: 15px;
+             border-radius: 8px;
+             overflow: hidden;
+             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+         }
+
+
+        /* Professor Owl AMA Chatbot Section */
+        #ama-chatbot {
+             background-color: #eef5ff; /* Light blue background */
+             padding: 60px 0;
+             margin-bottom: 60px;
+        }
+         #ama-chatbot h2 {
+             color: #007bff; /* Primary color for heading */
+             margin-bottom: 40px;
+         }
+         #chat-window {
+             width: 100%;
+             max-width: 700px; /* Wider chat window */
+             height: 450px; /* Taller chat window */
+             background: #ffffff; /* White chat background */
+             border-radius: 15px;
+             padding: 25px;
+             overflow-y: auto;
+             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+             margin-bottom: 20px;
+             border: 1px solid #cce5ff; /* Light primary border */
+         }
+         #ama-input {
+             flex: 1;
+             padding: 12px 20px;
+             border-radius: 25px;
+             border: 1px solid #ced4da;
+             font-size: 1rem;
+             transition: border-color 0.3s ease;
+         }
+         #ama-input:focus {
+             border-color: #007bff;
+             box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+         }
+
+        #send-button {
+            background: linear-gradient(45deg, #007bff 0%, #00c6ff 100%); /* Match solve button gradient */
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 12px 25px; /* Adjusted padding */
+            transition: all 0.3s ease;
+        }
+
+        #send-button:hover {
+            background: linear-gradient(45deg, #00c6ff 0%, #007bff 100%);
+            transform: translateY(-2px); /* Subtle lift */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+         #send-button:disabled {
+             opacity: 0.7;
+             cursor: not-allowed;
+             background: linear-gradient(45deg, #a9b9c8 0%, #c9d6e3 100%);
+         }
+
+        .sample-question {
+            background: #eef5ff; /* Light primary background */
+            color: #1a2b4a;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            max-width: 80%;
+            font-size: 1rem;
+            border: 1px solid #cce5ff;
+            text-align: center;
+        }
+        .sample-question:hover {
+            background: #cce5ff; /* Darker primary background */
+            border-color: #a6d0ff;
+            color: #1a2b4a;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+
+         /* Chat message styles */
+         #chat-window .user-message {
+             display: flex;
+             justify-content: flex-end;
+             margin: 10px 0;
+         }
+         #chat-window .user-message > div {
+             background: #007bff; /* Primary blue */
+             color: white;
+             padding: 10px 15px;
+             border-radius: 20px 20px 5px 20px; /* Rounded corners */
+             max-width: 75%; /* Slightly wider */
+             word-wrap: break-word;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+         }
+
+         #chat-window .bot-message {
+             display: flex;
+             align-items: flex-start; /* Align items to the top */
+             margin: 10px 0;
+         }
+         #chat-window .bot-message img {
+              width: 35px; /* Slightly smaller avatar */
+              height: 35px;
+              margin-right: 10px;
+              flex-shrink: 0;
+              border-radius: 50%; /* Ensure avatar is round */
+              background-color: #ffffff; /* White background if icon has transparency */
+              padding: 3px;
+         }
+         #chat-window .bot-message > div {
+             background: #e9ecef; /* Light grey */
+             color: #333;
+             padding: 10px 15px;
+             border-radius: 20px 20px 20px 5px;
+             max-width: 75%;
+             word-wrap: break-word;
+             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+         }
+         #chat-window .bot-message b {
+             color: #1a2b4a; /* Match heading color */
+         }
+
+        /* Typing indicator */
+        #typing {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-style: italic;
+            color: #6c757d;
+        }
+         #typing img { /* Match bot avatar size */
+             width: 35px;
+             height: 35px;
+             margin-right: 10px;
+             flex-shrink: 0;
+         }
+         #typing div { /* Style typing bubble */
+              background: #e9ecef;
+              padding: 10px 15px;
+              border-radius: 20px 20px 20px 5px;
+              max-width: 75%;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+         }
+         #dots {
+             display: inline-block; /* Ensure dots are visible */
+         }
+
+
+        /* Footer Enhancements */
+        .footer {
+             background-color: #1a2b4a; /* Dark corporate blue */
+             color: #e9ecef; /* Light grey text */
+             padding: 30px 0;
+             font-size: 0.9em;
+        }
+         .footer a {
+             color: #aebecd; /* Lighter links */
+             text-decoration: none;
+             transition: color 0.3s ease;
+         }
+         .footer a:hover {
+             color: #ffffff;
+         }
+
+
+        /* Utility & Animation helpers */
+         .fade-in {
+             animation: fadeIn 0.8s ease-out;
+         }
+         @keyframes fadeIn {
+             from { opacity: 0; transform: translateY(20px); }
+             to { opacity: 1; transform: translateY(0); }
+         }
+         /* Practice Problems Output Styling */
+    #practice-problems-output .practice-problem {
+        margin-bottom: 15px; /* Space between problems */
+        padding: 5px;
+        border: 1px solid #d1e7dd; /* Lighter green border */
+        border-left: 5px solid #198754; /* Success green left border */
+        border-radius: 5px;
+        background-color: #f0fff4; /* Very light green background */
+        transition: all 0.3s ease;
+        cursor: pointer; /* Indicate interactivity */
+        font-family: sans-serif; /* Consistent font */
+         
+         line-height: 1.7;
+    }
+     #practice-problems-output .practice-problem:last-child {
+        margin-bottom: 0; /* Remove margin for the last one */
+    }
+
+
+    #practice-problems-output .interactive-practice:hover {
+        background-color: #e6f9ef; /* Slightly darker green on hover */
+        border-color: #b8e6d1;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+     #practice-problems-output .problem-number {
+         font-weight: bold;
+         color: #198754; /* Match border color */
+        
+         display: inline-block; /* Keep it inline but allow margin */
+     }
+
+    /* Practice Check Modal Specific Styles */
+     #modalPracticeProblemContent {
+         font-family: 'Inter', sans-serif;
+         white-space: pre-wrap;
+         line-height: 1.7;
+         background-color: #e9ecef; /* Light gray background for problem display */
+     }
+
+     #practiceCheckOutput {
+         white-space: pre-wrap;
+         font-family: 'Inter', sans-serif;
+         line-height: 1.7;
+         color: #333;
+     }
+
+     #submitPracticeCheckButton {
+         background: linear-gradient(45deg, #198754 0%, #20c997 100%); /* Success gradient */
+         border: none;
+     }
+     #submitPracticeCheckButton:hover {
+         background: linear-gradient(45deg, #20c997 0%, #198754 100%);
+     }
+      #submitPracticeCheckButton:disabled {
+         background: linear-gradient(45deg, #a9b9c8 0%, #c9d6e3 100%);
+     }
+
+        /* --- NEW: Identified Concepts & Refresher Section Styles --- */
+        #concepts-refresher-section {
+             /* Inherits most card styles */
+             border: 1px solid #cfe2ff !important; /* Match solution card border */
+             box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
+             border-radius: 0.375rem !important;
+             margin-top: 20px; /* Space above this section */
+             margin-bottom: 20px !important; /* Space below this section, before practice */
+        }
+        #concepts-refresher-section .card-header {
+             /* Inherits header styles */
+             background-color: #d4e2f0; /* Light blue-grey background */
+             color: #1a2b4a; /* Corporate blue-grey text */
+             font-weight: 700;
+        }
+         #concepts-refresher-section .card-body {
+             /* Inherits body styles */
+             padding: 20px !important; /* Add padding back for content */
+         }
+        #identifiedConceptsList {
+            font-weight: 500;
+            color: #333;
+        }
+        #identifiedConceptsList strong {
+             color: #1a2b4a; /* Darker for the label */
+        }
+        #quickRefresherButton {
+             /* Inherits primary button styles, maybe adjust padding/size if needed */
+             /* Add button-text-content span to match loading animation */
+             padding: 8px 20px;
+             font-weight: 600;
+        }
+   
+
+        /* --- NEW: Refresher Modal Styles --- */
+         #refresherModal .modal-title {
+             color: #1a2b4a;
+             font-weight: 600;
+         }
+         #refresherModal .modal-body h6 {
+             color: #007bff; /* Primary color for section headings */
+             margin-top: 15px;
+             margin-bottom: 10px;
+             font-size: 1.1rem;
+         }
+         #refresherModal .refresher-content-area {
+             max-height: 300px; /* Limit height of content areas */
+             overflow-y: auto; /* Add scrollbar if content overflows */
+             padding: 15px;
+             border: 1px solid #e9ecef;
+             border-radius: 5px;
+             background-color: #f8f9fa; /* Light background */
+             margin-bottom: 15px;
+             white-space: pre-wrap; /* Maintain formatting from backend */
+             font-family: sans-serif; /* Consistent font */
+             line-height: 1.7;
+         }
+         #refresherModal .refresher-content-area p {
+              margin-bottom: 10px; /* Space between paragraphs */
+         }
+          #refresherModal .refresher-content-area p:last-child {
+               margin-bottom: 0;
+          }
+         #refresherModal .loading-spinner-modal {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             min-height: 150px; /* Ensure spinner is centered in a visible area */
+        }
+        #refresherModal .alert-danger {
+            /* Basic alert styling within the modal */
+             margin-top: 15px;
+        }
+
+       /* Feedback Section Styling (Keep your existing styling for the section/card) */
+    #feedback-section {
+         padding: 60px 0;
+         margin-bottom: 40px;
+         background-color: #eef2f6; /* Optional: Give it a background like other sections */
+    }
+     #feedback-section .card {
+         background-color: #ffffff;
+         border: 1px solid #e9ecef;
+         border-radius: 0.5rem;
+     }
+     #feedback-section h2 {
+         text-align: center;
+         color: #1a2b4a;
+         font-size: 2.5rem;
+         margin-bottom: 20px;
+     }
+
+    /* Star Rating CSS - MODIFIED to add star characters */
+    .rating {
+      display: inline-block;
+      direction: rtl; /* Reverse direction for positioning */
+      unicode-bidi: bidi-override; /* Ensure proper handling */
+      /* Remove float from container */
+    }
+    .rating input {
+      display: none; /* Hide the default radio buttons */
+    }
+    .rating label {
+      /* float: right; <-- Remove float from label */
+      font-size: 2rem; /* Size of the area */
+      color: transparent; /* Make the label text/background transparent */
+      padding: 0 3px; /* Spacing between stars */
+      cursor: pointer;
+      /* No transition here, transition will be on the pseudo-element color */
+    }
+
+    /* Use pseudo-element to display the star character */
+    .rating label::before {
+        content: '\2605'; /* Unicode character for a solid star */
+        color: #ccc; /* Default grey color for stars */
+        transition: color 0.2s ease; /* Smooth color transition on hover/selection */
+    }
+
+    /* Styles for hover and checked states */
+    .rating label:hover::before,          /* Highlight the hovered star */
+    .rating label:hover ~ label::before,  /* Highlight stars to the left of the hovered star */
+    .rating input:checked ~ label::before /* Highlight the selected star and stars to its left */
+    {
+      color: #ffc107; /* Yellow/Gold color */
+    }
+
+    /* Specific styling for the Rating error message using Bootstrap validation states */
+    /* Target the specific invalid feedback for the rating group */
+     #feedbackForm.was-validated .rating:has(input:invalid) + #ratingError {
+         display: block; /* Show the error message */
+     }
+     #feedbackForm .rating:has(input:checked) + #ratingError {
+         display: none !important; /* Hide error once a rating is selected */
+     }
+
+     /* Ensure standard Bootstrap invalid feedback is shown */
+     #feedbackForm.was-validated .form-control:invalid {
+          border-color: var(--bs-form-invalid-border-color);
+     }
+     #feedbackForm.was-validated .form-control:invalid ~ .invalid-feedback {
+          display: block;
+     }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top py-3"> <!-- Added sticky-top -->
+        <div class="container">
+            <a class="navbar-brand" href="#">Nova Maths</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#solver-section">Solver</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="#features-section">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#concepts-library">Concepts</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="#ama-chatbot">Professor Owl</a>
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary ms-lg-3" href="#">Login / School Portal</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container position-relative z-index-1"> <!-- position relative for shapes -->
+            <h1>Unlock Math Understanding</h1>
+            <p>MathMind AI provides schools with intelligent, step-by-step math assistance and learning tools.</p>
+            <a href="#solver-section" class="btn btn-primary">Get Started - Solve a Problem</a>
+        </div>
+    </header>
+
+
+    <!-- Main Content Sections -->
+    <div class="container">
+
+        <!-- Solver Section -->
+        <section id="solver-section" class="mb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-9">
+                    <h2 class="text-center mb-4">No Problem’s Too Tough – Show Us Yours!</h2>
+                    <div class="card shadow-sm"> <!-- Added shadow-sm -->
+                        <div class="card-body p-0">
+                            <!-- MODIFIED: Unified Input Bar Structure -->
+<div class="unified-input-bar">
+    <!-- Removed left button -->
+    <textarea class="form-control" id="mathProblemText" rows="1" placeholder="Type your math problem, speak, or attach file..." style="overflow-y: hidden;"></textarea>
+
+    <!-- Added Voice Button -->
+    <button type="button" id="startSpeechButton" class="btn btn-icon rounded-circle" aria-label="Start voice input" title="Speak your math problem">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
+            <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
+            <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/>
+        </svg>
+    </button>
+
+    <!-- Added Attach File Button -->
+    <button type="button" id="triggerFileInputButton" class="btn btn-icon rounded-circle ms-1" aria-label="Attach file" title="Attach image or PDF">
+         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
+             <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z"/>
+         </svg>
+     </button>
+     <input type="file" id="mathProblemFile" accept="image/*,application/pdf" class="d-none"> <!-- Hidden file input -->
+
+    <!-- Modified Solve/Send Button -->
+    <button type="button" id="solveUnifiedButton" class="btn btn-primary rounded-circle ms-1" aria-label="Solve problem" title="Solve Problem">
+        <span class="spinner-border spinner-border-sm loading-spinner" role="status" aria-hidden="true"></span>
+         <span class="button-text-content">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                 <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+             </svg>
+         </span>
+    </button>
+</div>
+<!-- END MODIFIED INPUT BAR -->
+                             <!-- File info moved here for better alignment -->
+                            <div id="selectedFileInfo" class="form-text ps-4 pb-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="row justify-content-center mt-4"> <!-- Row for solution and practice -->
+                 <div class="col-md-10 col-lg-9">
+                    <!-- NEW: Container for the uploaded question image preview -->
+                        <div class="row justify-content-center mt-3" id="uploadedQuestionImagePreviewArea" style="display: none;">
+                            <div class="col-md-10 col-lg-9 text-center">
+                                <div class="card shadow-sm">
+                                    <div class="card-header">
+                                        Uploaded Question                                     </div>
+                                    <div class="card-body p-3">
+                                        <img id="questionImageElement" src="#" alt="Question Image" class="img-fluid" style="max-height: 300px; border: 1px solid #eee; border-radius: .25rem;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END NEW -->
+                     <!-- Solution Display Section -->
+                     <div class="card mb-4">
+                         <div class="card-header">
+                             Step-by-Step Solution
+                         </div>
+                         <div class="card-body">
+                             <div id="alertBox" class="mb-3"></div> <!-- For status messages -->
+                             <!-- NEW: Radio buttons for step display and Next button -->
+                        <div class="mb-3 d-flex flex-wrap align-items-center border-bottom pb-3">
+                            <strong class="me-3 mb-2 mb-md-0">View Steps:</strong>
+                            <div class="form-check form-check-inline me-3 mb-2 mb-md-0">
+                                <input class="form-check-input" type="radio" name="solutionDisplayMode" id="displayAllSteps" value="all" checked>
+                                <label class="form-check-label" for="displayAllSteps">All at Once</label>
+                            </div>
+                            <div class="form-check form-check-inline mb-2 mb-md-0">
+                                <input class="form-check-input" type="radio" name="solutionDisplayMode" id="displayOneByOne" value="one-by-one">
+                                <label class="form-check-label" for="displayOneByOne">One by One</label>
+                            </div>
+                            <button id="nextStepButton" class="btn btn-sm btn-info ms-md-auto mt-2 mt-md-0" style="display: none;">Next Step →</button>
+                        </div>
+                             <div id="solutionOutput">
+                                 <p class="text-muted">Your step-by-step solution will appear here...</p>
+                             </div>
+                              <button id="copySolutionButton" class="btn btn-outline-secondary btn-sm mt-3" style="display: none;">
+                                  Copy Solution Text
+                              </button>
+                         </div>
+                     </div>
+
+                                   <!-- NEW: Identified Concepts & Refresher Section -->
+                                   <div id="concepts-refresher-section" class="card mb-4" style="display: none;"> <!-- Initially hidden -->
+                                    <div class="card-header">
+                                        Identified Concept
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="identifiedConceptsList" >
+                                            
+                                        </div>
+                                         <button type="button" id="quickRefresherButton" class="btn btn-primary">
+                                              <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
+                                              <span class="button-text-content">Quick Refresher</span>
+                                         </button>
+                                         <div id="conceptsRefresherAlert" class="mt-3"></div> <!-- For errors/messages specific to this section -->
+                                    </div>
+                                </div>
+                                <!-- END NEW: Identified Concepts & Refresher Section -->
+
+                     <!-- Practice Problems Section (Initially Hidden) -->
+                     <div id="practice-problems-section">
+                          <div class="card">
+                              <div class="card-header">
+                                  Generate Practice Problems
+                              </div>
+                              <div class="card-body">
+                                  <div id="practice-controls">
+                                      <label for="practiceProblemSlider" class="form-label mb-0">Number of problems:</label>
+                                      <input type="range" class="form-range" min="1" max="10" step="1" value="3" id="practiceProblemSlider">
+                                      <span id="practiceProblemCount">3</span>
+                                      <button id="generatePracticeButton" class="btn btn-success ms-auto">
+                                          <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
+                                          Generate
+                                      </button>
+                                  </div>
+                                  <div id="practice-loading">
+                                      <div class="spinner-border text-secondary" role="status">
+                                          <span class="visually-hidden">Loading...</span>
+                                      </div>
+                                      <p class="mt-2">Generating practice problems...</p>
+                                  </div>
+                                  <div id="practice-problems-output">
+                                      <p class="text-muted">Click 'Generate' after getting a solution.</p>
+                                  </div>
+                              </div>
+                          </div>
+                     </div>
+                 </div>
+             </div>
+        </section>
+
+
+       
+
+        <!-- Concepts Library Section -->
+           <!-- Concepts Library Section (NCERT Class-wise) -->
+   
+
+         <!-- Professor Owl AMA Chatbot Section -->
+        <section id="ama-chatbot" class="text-center">
+             <h2>🦉 Professor Owl - Ask Me Anything about Math Theory</h2>
+             <div class="row justify-content-center">
+                 <div class="col-md-10 col-lg-8"> <!-- Adjusted column width -->
+                    <p class="lead text-muted mb-4">Got a question about a historical math discovery, a famous mathematician, or why a certain theorem works? Ask Professor Owl!</p>
+                     <div id="chat-window">
+                         <!-- Chat messages will appear here -->
+                     </div>
+                     <div class="input-group mb-3" style="max-width: 700px; margin: 0 auto;"> <!-- Centered and max-width -->
+                         <input type="text" id="ama-input" class="form-control" placeholder="Ask your math theory question...">
+                         <button id="send-button" onclick="sendQuestion()" class="btn btn-primary" >Send</button>
+                     </div>
+                 </div>
+             </div>
+         </section>
+
+
+    </div> <!-- End Container -->
+
+
+    <section id="feedback-section" class="mb-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-7">
+                    <h2 class="text-center mb-4">Give Us Your Feedback</h2>
+                    <div class="card shadow-sm p-4">
+                        <div class="card-body">
+                            <p class="text-muted text-center mb-4">Help us improve Nova Maths by sharing your experience.</p>
+                            <form id="feedbackForm" novalidate>
+                                <div class="mb-4 text-center">
+                                    <label for="starRating" class="form-label d-block mb-2">Your Rating <span class="text-danger">*</span></label>
+                                    <div class="rating">
+                                        <!-- Stars are ordered 5 down to 1 in the HTML -->
+                                        <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="5 stars"></label>
+                                        <input type="radio" id="star4" name="rating" value="4" required /><label for="star4" title="4 stars"></label>
+                                        <input type="radio" id="star3" name="rating" value="3" required /><label for="star3" title="3 stars"></label>
+                                        <input type="radio" id="star2" name="rating" value="2" required /><label for="star2" title="2 stars"></label>
+                                        <input type="radio" id="star1" name="rating" value="1" required /><label for="star1" title="1 star"></label>
+                                    </div>
+                                    <div class="invalid-feedback" id="ratingError">Please select a star rating.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="feedbackEmail" class="form-label">Your Email Address <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="feedbackEmail" required placeholder="name@example.com">
+                                     <div class="invalid-feedback">Please provide a valid email address.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="feedbackText" class="form-label">Detailed Feedback (Optional)</label>
+                                    <textarea class="form-control" id="feedbackText" rows="4" placeholder="Share your thoughts..."></textarea>
+                                </div>
+
+                                <div id="feedbackAlertBox" class="mb-3"></div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" id="submitFeedbackButton" class="btn btn-primary btn-lg">
+                                         <span class="spinner-border spinner-border-sm me-2 loading-spinner" role="status" aria-hidden="true"></span>
+                                         <span class="button-text-content">Submit Feedback</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-3">
+                     <h5>MathMind AI</h5>
+                     <p class="text-muted">Empowering students with AI-powered math assistance.</p>
+                </div>
+                 <div class="col-md-2 col-6 mb-3">
+                     <h5>Platform</h5>
+                     <ul class="list-unstyled">
+                         <li><a href="#solver-section">Solver</a></li>
+                         <li><a href="#features-section">Features</a></li>
+                         <li><a href="#concepts-library">Concepts</a></li>
+                         <li><a href="#ama-chatbot">Professor Owl</a></li>
+                     </ul>
+                 </div>
+                 <div class="col-md-2 col-6 mb-3">
+                      <h5>School Portal</h5>
+                      <ul class="list-unstyled">
+                         <li><a href="#">Login</a></li>
+                         <li><a href="#">Sign Up</a></li>
+                         <li><a href="#">Teacher Dashboard</a></li>
+                          <li><a href="#">Admin Dashboard</a></li>
+                      </ul>
+                 </div>
+                 <div class="col-md-2 mb-3">
+                     <h5>Support</h5>
+                     <ul class="list-unstyled">
+                         <li><a href="#">How it Works</a></li>
+                         <li><a href="#">Contact Us</a></li>
+                         <li><a href="#">FAQ</a></li>
+                     </ul>
+                 </div>
+            </div>
+            <hr class="my-3" style="border-color: rgba(255,255,255,0.1);">
+            <div class="text-center text-muted small">
+                 <p>&copy; 2024 MathMind AI Tutor. All rights reserved.</p>
+                 <p>Disclaimer: AI-generated solutions are for guidance only. Always verify critical results.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Step Clarification Modal -->
+    <div class="modal fade" id="clarifyStepModal" tabindex="-1" aria-labelledby="clarifyStepModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clarifyStepModalLabel">Clarify Step</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Original Step Content:</h6>
+                    <div id="modalStepContent" class="mb-3 p-2 bg-light border rounded" style="max-height: 200px; overflow-y: auto;"></div>
+                    <form id="clarificationForm">
+                        <input type="hidden" id="modalStepNumber">
+                        <div class="mb-3">
+                            <label for="clarificationQuestion" class="form-label">Ask for more details about this step:</label>
+                            <textarea class="form-control" id="clarificationQuestion" rows="3" placeholder="e.g., Why was this formula used? Can you explain this term?"></textarea>
+                        </div>
+                        <div id="modalAlertBox" class="mb-3"></div>
+                        <div id="clarificationResult" class="mt-3" style="display: none;">
+                            <h6>Clarification:</h6>
+                            <div id="clarificationOutput" class="p-3 border rounded bg-white" style="max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="clarificationForm" id="submitClarificationButton" class="btn btn-primary">
+                         <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
+                         Get Clarification
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="practiceCheckModal" tabindex="-1" aria-labelledby="practiceCheckModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="practiceCheckModalLabel">Check Your Practice Solution</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Practice Problem:</h6>
+                    <div id="modalPracticeProblemContent" class="mb-3 p-2 bg-light border rounded" style="max-height: 200px; overflow-y: auto;"></div>
+
+                    <form id="practiceCheckForm">
+                        <input type="hidden" id="modalPracticeProblemTextHidden">
+
+                        <div class="mb-3">
+                            <label for="practiceSolutionFile" class="form-label">Upload Your Solution (Image/PDF):</label>
+                            <input class="form-control" type="file" id="practiceSolutionFile" accept="image/*,application/pdf" required>
+                             <div id="practiceSelectedFileInfo" class="form-text mt-1"></div> <!-- To display selected file name -->
+                        </div>
+
+                        <div id="practiceModalAlertBox" class="mb-3"></div>
+
+                        <div id="practiceCheckResult" class="mt-3" style="display: none;">
+                            <h6>Feedback:</h6>
+                            <div id="practiceCheckOutput" class="p-3 border rounded bg-white" style="max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="practiceCheckForm" id="submitPracticeCheckButton" class="btn btn-success">
+                         <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
+                         Check Solution
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- NEW: Quick Refresher Modal -->
+    <div class="modal fade" id="refresherModal" tabindex="-1" aria-labelledby="refresherModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refresherModalLabel">Quick Refresher: [Concept Name]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                     <div id="refresherLoadingSpinner" class="loading-spinner-modal" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="ms-2 text-muted">Loading refresher content...</span>
+                    </div>
+                     <div id="refresherContent" style="display: none;">
+                        <h6>Concept Description:</h6> <!-- New Heading -->
+                        <div id="refresherConceptDescription" class="refresher-content-area">
+                             <!-- Concept description loads here -->
+                        </div>
+                        <h6>Example:</h6>
+                        <div id="refresherExample" class="refresher-content-area">
+                             <!-- Example content loads here -->
+                        </div>
+                        <h6>Solved Questions:</h6>
+                        <div id="refresherSolvedQuestions" class="refresher-content-area">
+                            <!-- Solved questions load here -->
+                        </div>
+                     </div>
+                     <div id="refresherError" class="alert alert-danger" style="display: none;">
+                        <!-- Error message loads here -->
+                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <!-- Custom JavaScript (Updated to handle new sections and animations) -->
+    <script>
+
+        // Add Practice Check Modal elements (Check these carefully)
+        const practiceCheckModalElement = document.getElementById('practiceCheckModal');
+        const practiceCheckModal = new bootstrap.Modal(practiceCheckModalElement); // Initialize Bootstrap Modal instance
+        const modalPracticeProblemContent = document.getElementById('modalPracticeProblemContent');
+        const practiceCheckForm = document.getElementById('practiceCheckForm');
+        const practiceSolutionFile = document.getElementById('practiceSolutionFile');
+        const practiceSelectedFileInfo = document.getElementById('practiceSelectedFileInfo');
+        const modalPracticeProblemTextHidden = document.getElementById('modalPracticeProblemTextHidden');
+        const submitPracticeCheckButton = document.getElementById('submitPracticeCheckButton');
+        const practiceCheckResult = document.getElementById('practiceCheckResult');
+        const practiceCheckOutput = document.getElementById('practiceCheckOutput');
+        const practiceModalAlertBox = document.getElementById('practiceModalAlertBox');
+
+                // NEW: Concepts & Refresher Section Elements
+        const conceptsRefresherSection = document.getElementById('concepts-refresher-section');
+        const identifiedConcepts = document.getElementById('identifiedConceptsList');
+        const quickRefresherButton = document.getElementById('quickRefresherButton');
+        const conceptsRefresherAlert = document.getElementById('conceptsRefresherAlert'); // New alert container
+
+        // NEW: Refresher Modal elements
+        const refresherModalElement = document.getElementById('refresherModal');
+        const refresherModal = new bootstrap.Modal(refresherModalElement); // Initialize Bootstrap Modal instance
+        const refresherModalLabel = document.getElementById('refresherModalLabel');
+        const refresherContent = document.getElementById('refresherContent');
+        const refresherExample = document.getElementById('refresherExample');
+        const refresherConceptDescription = document.getElementById('refresherConceptDescription'); // <--- Add this line
+        const refresherSolvedQuestions = document.getElementById('refresherSolvedQuestions');
+        const refresherLoadingSpinner = document.getElementById('refresherLoadingSpinner');
+        const refresherError = document.getElementById('refresherError');
+        // --- API Endpoints ---
+        //const API_BASE_URL = 'https://novamaths-api-edfd27612b5d.herokuapp.com'; // Adjust if needed
+        const API_BASE_URL = 'http://127.0.0.1:8080';
+        const SOLVE_API_ENDPOINT = `${API_BASE_URL}/solve-math`;
+        const CLARIFY_API_ENDPOINT = `${API_BASE_URL}/clarify-step`;
+        const PRACTICE_API_ENDPOINT = `${API_BASE_URL}/practice`;
+        const AMA_API_ENDPOINT = `${API_BASE_URL}/ama`; // AMA Endpoint
+        const CHECK_API_ENDPOINT= `${API_BASE_URL}/check`;
+        const REFRESHER_API_ENDPOINT= `${API_BASE_URL}/refresher`; // Your new backend endpoint
+        const FEEDBACK_API_ENDPOINT = `${API_BASE_URL}/submit-feedback`;
+        // --- DOM Elements ---
+        const mathProblemText = document.getElementById('mathProblemText');
+        const mathProblemFile = document.getElementById('mathProblemFile');
+        const solutionOutput = document.getElementById('solutionOutput');
+        const alertBox = document.getElementById('alertBox');
+        const copySolutionButton = document.getElementById('copySolutionButton');
+        
+        // MODIFIED: Use the new clip icon button instead of the old triggerFileButton
+        const triggerFileInputButton = document.getElementById('triggerFileInputButton'); // <--- NEW LINE
+        const solveUnifiedButton = document.getElementById('solveUnifiedButton');
+        const selectedFileInfo = document.getElementById('selectedFileInfo');
+        // Modal elements
+        const clarifyStepModalElement = document.getElementById('clarifyStepModal');
+        const clarifyStepModal = new bootstrap.Modal(clarifyStepModalElement);
+        const modalStepContent = document.getElementById('modalStepContent');
+        const modalStepNumberInput = document.getElementById('modalStepNumber');
+        const clarificationQuestion = document.getElementById('clarificationQuestion');
+        const clarificationForm = document.getElementById('clarificationForm');
+        const clarificationResult = document.getElementById('clarificationResult');
+        const clarificationOutput = document.getElementById('clarificationOutput');
+        const modalAlertBox = document.getElementById('modalAlertBox');
+        const submitClarificationButton = document.getElementById('submitClarificationButton');
+        // Practice Problem Elements
+        const practiceSection = document.getElementById('practice-problems-section');
+        const practiceSlider = document.getElementById('practiceProblemSlider');
+        const practiceCount = document.getElementById('practiceProblemCount');
+        const generatePracticeButton = document.getElementById('generatePracticeButton');
+        const practiceOutput = document.getElementById('practice-problems-output');
+        const practiceLoading = document.getElementById('practice-loading');
+         // AMA Chatbot Elements
+        const amaInput = document.getElementById('ama-input');
+        const sendButton = document.getElementById('send-button');
+        const chatWindow = document.getElementById('chat-window');
+
+// --- NEW: Feedback DOM Elements (add these references) ---
+        const feedbackForm = document.getElementById('feedbackForm');
+        const feedbackEmail = document.getElementById('feedbackEmail');
+        const feedbackText = document.getElementById('feedbackText');
+        const submitFeedbackButton = document.getElementById('submitFeedbackButton');
+        const feedbackAlertBox = document.getElementById('feedbackAlertBox');
+        const ratingError = document.getElementById('ratingError'); // Added rating error element 
+        // --- NEW: DOM Elements for Step-by-Step Display & Image Preview ---
+        const displayAllStepsRadio = document.getElementById('displayAllSteps');
+        const displayOneByOneRadio = document.getElementById('displayOneByOne');
+        const nextStepButton = document.getElementById('nextStepButton');
+        const uploadedQuestionImagePreviewArea = document.getElementById('uploadedQuestionImagePreviewArea');
+        const questionImageElement = document.getElementById('questionImageElement');
+        // --- Global Variables to Store Context ---
+        let currentProblemText = ''; // Stores text used for the LAST successful solution
+        let currentProblemFileURI = null; // Stores file URI from LAST successful solution
+        let currentSolutionText = '';     // Stores raw solution text for clarification
+        // Conversation History for AMA Chatbot
+        let conversationHistory = []; // Stores messages: { role: 'user' | 'bot', content: 'message text' }
+        let lastIdentifiedConceptsString = '';
+        // --- NEW: Global Variables for Step-by-Step Display & Image Preview ---
+        let currentSolutionStepsArray = [];
+        let currentStepIndex = 0;
+        let lastUploadedFileWasImage = false;
+        let lastUploadedImageSrc = '';
+       
+
+        // --- Helper Functions ---
+
+        // Added for Voice Input
+const startSpeechButton = document.getElementById('startSpeechButton'); // <--- NEW LINE
+let isRecording = false; // <--- NEW LINE
+let recognition = null; // Variable to hold SpeechRecognition object // <--- NEW LINE
+
+
+function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return '';
+            return unsafe
+                .replace(/&/g, "&")
+                .replace(/</g, "<")
+                .replace(/>/g, ">")
+                .replace(/"/g, '"')
+                .replace(/'/g, "'");
+        }
+
+
+function showButtonLoading(button, loadingText = 'Processing...') {
+     button.disabled = true;
+     const spinner = button.querySelector('.loading-spinner');
+     const textContent = button.querySelector('.button-text-content'); // Get the text/icon span
+
+     if (spinner) spinner.style.display = 'inline-block';
+     if (textContent) {
+         // Store original content if not already stored
+         if (!button.originalContent) {
+              button.originalContent = textContent.innerHTML;
+         }
+         // Replace content with text (or just hide, depending on design)
+         textContent.innerHTML = loadingText; // Replace icon with text
+         textContent.style.visibility = 'visible'; // Ensure visible if hidden
+     } else {
+          // Fallback for buttons without button-text-content span
+           if (!button.originalText) button.originalText = button.textContent.trim();
+          button.textContent = `${loadingText}`;
+     }
+}
+function hideButtonLoading(button) {
+    button.disabled = false;
+    const spinner = button.querySelector('.loading-spinner');
+     const textContent = button.querySelector('.button-text-content');
+
+    if (spinner) spinner.style.display = 'none';
+     if (textContent && button.originalContent !== undefined) {
+         textContent.innerHTML = button.originalContent; // Restore original icon/text
+          // Ensure visibility if it was manipulated
+          textContent.style.visibility = '';
+     } else if (button.originalText !== undefined) {
+         button.textContent = button.originalText; // Fallback restore
+     }
+}
+
+function showFeedbackAlert(message, type = 'danger') {
+             // Check if the feedbackAlertBox element exists
+             if (!feedbackAlertBox) {
+                 console.warn("Feedback alert container (feedbackAlertBox) not found.");
+                 // Optional: fall back to main alert or just log error
+                 // if (alertBox) showAlert(message, type, alertBox);
+                 return;
+             }
+             feedbackAlertBox.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${escapeHtml(message)}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+        }
+
+        function clearFeedbackAlert() {
+             // Check if the feedbackAlertBox element exists
+             if (feedbackAlertBox) {
+                 feedbackAlertBox.innerHTML = '';
+             }
+        }
+
+        function showFeedbackButtonLoading(loadingText = 'Submitting...') {
+              // Check if the submitFeedbackButton element exists
+              if (submitFeedbackButton) {
+                 // Call the general helper function
+                 showButtonLoading(submitFeedbackButton, loadingText);
+              } else {
+                   console.warn("Feedback submit button (submitFeedbackButton) not found.");
+              }
+         }
+
+         function hideFeedbackButtonLoading() {
+              // Check if the submitFeedbackButton element exists
+              if (submitFeedbackButton) {
+                 // Call the general helper function
+                 hideButtonLoading(submitFeedbackButton);
+              } else {
+                   console.warn("Feedback submit button (submitFeedbackButton) not found for hiding loading.");
+              }
+         }
+
+         // --- NEW: Feedback Form Submit Listener (sends to your backend API) ---
+        // Add the event listener only if the feedbackForm element exists
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default form submission
+                clearFeedbackAlert(); // Clear previous alerts
+
+                // Add Bootstrap validation classes to trigger built-in validation feedback
+                 feedbackForm.classList.add('was-validated');
+
+                 // Check form validity using browser's built-in check (handles 'required' for email and radio group)
+                 // Also checks email format validation.
+                 if (!feedbackForm.checkValidity()) {
+                     event.stopPropagation(); // Stop propagation if form is invalid
+                     // The browser/Bootstrap validation will visually highlight the invalid fields.
+                     // Our CSS handles the rating error visibility based on .was-validated and :has(input:invalid)
+                     // showFeedbackAlert('Please fill in all required fields correctly.', 'warning'); // Optional: show a generic alert too
+                     return; // Stop execution if form is invalid
+                 }
+
+                 // If form is valid according to browser's check, we can proceed.
+                 // The CSS should take care of hiding the rating error if a radio is checked.
+                 // We can also explicitly hide it here for certainty, though CSS should handle it.
+                 if (ratingError) { // Check if element exists
+                    ratingError.classList.remove('d-block', 'text-danger');
+                    ratingError.classList.add('d-none');
+                 }
+
+
+                // Get selected rating - should be checked because checkValidity() passed
+                const selectedRatingInput = feedbackForm.querySelector('input[name="rating"]:checked');
+                const rating = selectedRatingInput ? selectedRatingInput.value : null; // Should NOT be null here if checkValidity passed
+
+                const email = feedbackEmail ? feedbackEmail.value.trim() : ''; // Check if element exists
+                const feedback = feedbackText ? feedbackText.value.trim() : ''; // Check if element exists
+
+
+                // Data payload to send to the backend
+                const payload = {
+                    rating: rating !== null ? parseInt(rating, 10) : null, // Convert rating to a number if not null
+                    email: email,
+                    feedback: feedback // Will be empty string if textarea was empty
+                };
+
+                showFeedbackButtonLoading(); // Show loading state on the button
+
+                try {
+                    const response = await fetch(FEEDBACK_API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // You might need other headers depending on your backend authentication/CORS setup
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                     // Read response as text first to catch non-JSON errors
+                     const responseText = await response.text();
+                     let responseData = null;
+                     try {
+                          // Try parsing JSON if response has content (even if !response.ok, it might be a JSON error payload)
+                          if (responseText) {
+                             responseData = JSON.parse(responseText);
+                          }
+                     } catch (jsonError) {
+                           // Ignore JSON parsing error if responseText was not valid JSON
+                           console.warn("Failed to parse response as JSON:", jsonError);
+                           // responseData remains null
+                     }
+
+
+                    if (!response.ok) {
+                        // Handle non-OK HTTP status
+                        const errorDetail = responseData && (responseData.error || responseData.message) ? (responseData.error || responseData.message) : responseText.substring(0, 200) || `HTTP Status: ${response.status}`;
+                        console.error("Backend Feedback Error Response:", responseData || responseText);
+                        throw new Error(`Server error: ${errorDetail}`);
+                    }
+
+                    // Assuming success if response.ok is true
+                    // Your backend should ideally return a success message in the JSON response
+                    const successMessage = responseData && responseData.message ? responseData.message : 'Thank you for your feedback!';
+                    showFeedbackAlert(successMessage, 'success');
+
+                    // Clear the form after successful submission
+                    feedbackForm.reset();
+                     feedbackForm.classList.remove('was-validated'); // Reset validation state
+                    // Explicitly hide the rating error message visually if needed after reset
+                     if (ratingError) {
+                         ratingError.classList.remove('d-block');
+                         ratingError.classList.add('d-none');
+                     }
+
+
+                } catch (error) {
+                    console.error('Error submitting feedback:', error);
+                     showFeedbackAlert(`Failed to submit feedback: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : escapeHtml(error.message)}`, 'danger');
+                } finally {
+                    hideFeedbackButtonLoading(); // Hide loading state on the button
+                }
+            });
+        }
+        function showAlert(message, type = 'danger', container = alertBox) {
+             if (!container) return;
+             container.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${escapeHtml(message)}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+        }
+
+        function clearAlert(container = alertBox) {
+             if (container) container.innerHTML = '';
+        }
+
+        function showModalLoading() {
+            submitClarificationButton.disabled = true;
+            const spinner = submitClarificationButton.querySelector('.loading-spinner');
+            if(spinner) spinner.style.display = 'inline-block';
+            // Simple text update for modal button
+             const buttonTextNode = Array.from(submitClarificationButton.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0);
+             if(buttonTextNode) buttonTextNode.textContent = ' Getting Clarification... ';
+             else submitClarificationButton.textContent = ' Getting Clarification... ';
+        }
+
+        function hideModalLoading() {
+            submitClarificationButton.disabled = false;
+            const spinner = submitClarificationButton.querySelector('.loading-spinner');
+            if(spinner) spinner.style.display = 'none';
+             const buttonTextNode = Array.from(submitClarificationButton.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0);
+             if(buttonTextNode) buttonTextNode.textContent = ' Get Clarification ';
+             else submitClarificationButton.textContent = ' Get Clarification '; // Restore original text
+        }
+
+
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return '';
+            return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function renderMathJax(container) {
+             if (!container) return;
+             if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                 // console.log("Typesetting MathJax for container:", container);
+                 setTimeout(() => { // Add slight delay
+                     window.MathJax.typesetPromise([container]).catch((err) => {
+                         console.error('MathJax typesetting error:', err);
+                         // Optional: display a message to the user if typesetting fails
+                         if (container.id === 'solutionOutput') {
+                             showAlert("Could not render some mathematical expressions. Please check the solution text.", "warning");
+                         } else if (container.id === 'practice-problems-output') {
+                             showAlert("Could not render some mathematical expressions in practice problems.", "warning");
+                         }
+                     });
+                 }, 50); // Small delay to ensure DOM is ready
+            } else {
+                 console.warn("MathJax not ready or typesetPromise not available.");
+            }
+         }
+
+     function clearSelectedFile() {
+    mathProblemText.value = ''; // Also clear text input if you want unified clear
+    mathProblemFile.value = '';
+    selectedFileInfo.innerHTML = '';
+    // NEW: Clear image preview flags and hide area
+    lastUploadedFileWasImage = false;
+    lastUploadedImageSrc = '';
+    if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
+    if (questionImageElement) questionImageElement.src = '#';
+}
+
+        // --- Event Listeners ---
+     // NEW: Refresher Modal Loading Functions
+     function showRefresherLoading() {
+         refresherLoadingSpinner.style.display = 'flex'; // Use flex to center spinner
+         refresherContent.style.display = 'none';
+         refresherError.style.display = 'none';
+         refresherExample.innerHTML = ''; // Clear content while loading
+         refresherSolvedQuestions.innerHTML = '';
+         // Optional: Update modal title to show loading state
+         refresherModalLabel.textContent = `Quick Refresher: Loading...`;
+         clearAlert(refresherError); // Clear any previous error message
+     }
+
+     function hideRefresherLoading() {
+         refresherLoadingSpinner.style.display = 'none';
+     }
+       // Textarea Auto-resize
+mathProblemText.addEventListener('input', function() {
+    this.style.height = 'auto';
+    const scrollHeight = this.scrollHeight;
+    const maxHeight = 150; // Max height before scrollbar appears (adjust as needed)
+    if (scrollHeight > maxHeight) {
+        this.style.height = maxHeight + 'px';
+        this.style.overflowY = 'auto';
+    } else {
+        this.style.height = scrollHeight + 'px';
+        this.style.overflowY = 'hidden';
+    }
+     // Also check if solve button should be enabled/disabled
+     updateSolveButtonState(); // <--- ADDED
+});
+// Also check on change (e.g., from voice)
+mathProblemText.addEventListener('change', updateSolveButtonState); // <--- ADDED
+
+        // Trigger File Input
+       // MODIFIED: Trigger File Input using the new clip icon button
+triggerFileInputButton.addEventListener('click', () => mathProblemFile.click()); // <--- MODIFIED
+
+       // File Selection Display
+mathProblemFile.addEventListener('change', () => {
+    if (mathProblemFile.files.length > 0) {
+        const file = mathProblemFile.files[0];
+        const fileName = file.name;
+        const maxSizeMB = 5;
+        if (file.size > maxSizeMB * 1024 * 1024) {
+            showAlert(`File size exceeds the maximum limit of ${maxSizeMB}MB.`, 'warning');
+            clearSelectedFile(); // This will also clear image flags
+            return;
+        }
+        selectedFileInfo.innerHTML = `Selected: <strong>${escapeHtml(fileName)}</strong> <a href="#" class="clear-file text-danger ms-2" title="Remove file" onclick="event.preventDefault(); clearSelectedFile(); updateSolveButtonState();">Remove</a>`;
+        selectedFileInfo.style.display = 'block';
+
+        // NEW: Image preview logic for selected file
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                lastUploadedImageSrc = e.target.result; // Store for potential display after solve
+                lastUploadedFileWasImage = true;
+            }
+            reader.readAsDataURL(file);
+        } else {
+            lastUploadedFileWasImage = false;
+            lastUploadedImageSrc = '';
+        }
+    } else {
+        selectedFileInfo.innerHTML = '';
+        selectedFileInfo.style.display = 'none';
+        // NEW: Clear image flags if file is deselected
+        lastUploadedFileWasImage = false;
+        lastUploadedImageSrc = '';
+    }
+    updateSolveButtonState();
+});
+        // --- Solve Button Click Handler ---
+    // --- Solve Button Click Handler ---
+solveUnifiedButton.addEventListener('click', async () => {
+    clearAlert();
+    practiceSection.style.display = 'none';
+    practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' after getting a solution.</p>';
+    conceptsRefresherSection.style.display = 'none';
+    identifiedConceptsList.innerHTML = '';
+    clearAlert(conceptsRefresherAlert);
+    // NEW: Hide question image preview before new solve
+    if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
+    if (questionImageElement) questionImageElement.src = '#';
+
+
+    const problemTextValue = mathProblemText.value.trim();
+    const file = mathProblemFile.files[0];
+
+    // IMPORTANT: Reset image flags if no file is being sent for *this* solve operation.
+    // The 'change' event on mathProblemFile handles setting these if a file *is* selected.
+    if (!file) {
+        lastUploadedFileWasImage = false;
+        lastUploadedImageSrc = '';
+    }
+    // If 'file' exists here, lastUploadedFileWasImage and lastUploadedImageSrc
+    // should have been set by the 'change' event of mathProblemFile.
+
+    if (!problemTextValue && !file) {
+        showAlert('Please type a math problem or upload a file to solve.');
+        return;
+    }
+    if (isRecording && recognition) {
+        recognition.stop();
+    }
+    showButtonLoading(solveUnifiedButton, 'Solving...');
+    solutionOutput.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="min-height: 150px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><span class="ms-2 text-muted">Processing request...</span></div>`;
+    copySolutionButton.style.display = 'none';
+    currentProblemText = '';
+    currentProblemFileURI = null;
+    currentSolutionText = '';
+    // NEW: Reset step display for new solution
+    currentSolutionStepsArray = [];
+    currentStepIndex = 0;
+    if (nextStepButton) nextStepButton.style.display = 'none';
+    if (displayAllStepsRadio) displayAllStepsRadio.checked = true; // Default to all steps view
+
+    const formData = new FormData();
+    if (problemTextValue) formData.append('problemText', problemTextValue);
+    if (file) formData.append('problemFile', file);
+
+    try {
+        const response = await fetch(SOLVE_API_ENDPOINT, { method: 'POST', body: formData });
+        let responseData;
+        try { responseData = await response.json(); } catch (jsonError) {
+             if (!response.ok) { const textError = await response.text(); throw new Error(`Server error (${response.status}): ${textError.substring(0, 200) || 'Could not read error response.'}`); }
+             else { throw new Error("Received an unexpected non-JSON response from the server."); }
+         }
+
+        if (!response.ok) throw new Error(responseData.error || responseData.message || `HTTP error! Status: ${response.status}`);
+
+        if (responseData.solution) {
+            displaySolution(
+                responseData.solution,
+                problemTextValue,
+                responseData.identifiedConcepts,
+                responseData.file_uri
+            );
+            mathProblemText.value = '';
+            // clearSelectedFile(); // Call this carefully, it clears image flags.
+                                 // Instead, let's manage flags directly or ensure displaySolution uses the correct ones.
+                                 // For now, displaySolution uses global flags, which are set based on the *current* file input.
+                                 // If the file input is cleared *after* solving, the image might disappear if re-rendering.
+                                 // So, perhaps DON'T call clearSelectedFile() here, or modify it.
+                                 // Let's clear the file input visually but preserve the flags for the current solution display.
+            mathProblemFile.value = ''; // Clear file input element
+            selectedFileInfo.innerHTML = ''; // Clear file info text
+
+
+            mathProblemText.style.height = 'auto';
+        } else {
+             throw new Error("Solution missing in the server response.");
+        }
+
+    } catch (error) {
+        console.error('Error solving problem:', error);
+        showAlert(`Failed to get solution: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : error.message}`);
+        solutionOutput.innerHTML = '<p class="text-danger">Error processing request. Please try again.</p>';
+        copySolutionButton.style.display = 'none';
+        practiceSection.style.display = 'none';
+        // NEW: Also hide image preview on error
+        if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
+        if (questionImageElement) questionImageElement.src = '#';
+    } finally {
+        hideButtonLoading(solveUnifiedButton);
+        updateSolveButtonState();
+    }
+});
+        // --- Speech Recognition Setup (NEW) ---
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false; // Stop after a pause
+    recognition.interimResults = true; // Get results while speaking
+    recognition.lang = 'en-US'; // Set language (can be dynamic)
+
+    let finalTranscript = ''; // To build the final transcript
+     // Store previous interim transcript to remove it on the next update
+     recognition.previousInterim = ''; // <--- Initialize
+
+
+    recognition.onstart = () => {
+        isRecording = true;
+        startSpeechButton.classList.add('recording');
+        startSpeechButton.title = 'Recording... Click to stop';
+         // Change mic icon to mute icon
+         startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-mute-fill" viewBox="0 0 16 16">
+            <path d="M13 8c0 .564-.094 1.107-.266 1.613l-1.84-1.84a3 3 0 0 0 0-2.826L13 8zm-9.054.904a3 3 0 0 0 0 2.828l1.84-1.84L4.946 8.904zm4.964-4.964v5.5l2.275 2.274a3.5 3.5 0 0 1-3.694-6.95l1.419 1.42zm-1.849 1.85a3.5 3.5 0 0 0-4.63 4.465L3.5 12l.39.39 5.158-5.159L5.833 5.832zM9.344 15c-.002 0-.026 0-.042 0a1 1 0 0 0-.948.684l-.437 1.463A.5.5 0 0 1 7.9 16h-1.88c-.276 0-.526-.179-.617-.429l-.437-1.463A1 1 0 0 0 4.699 15c-.016 0-.04-.002-.042 0h-.5a.5.5 0 0 1-.5-.5c0-1.458.362-2.866 1.05-4.128L1.917 14.17C.451 12.796 0 10.68 0 8c0-1.936.338-3.796.966-5.5H4.5a.5.5 0 0 1 0 1H1.73c-.457 1.257-.731 2.668-.731 4.128C1 10.093 1.464 11.8 2.525 13.07l1.49-1.49A6.5 6.5 0 0 1 8 4.5a6.5 6.5 0 0 1 1.923 4.307l1.49 1.49A6.5 6.5 0 0 1 15 8.5v-.5a.5.5 0 0 1 1 0v.5c0 2.071-.573 3.998-1.641 5.607l-1.49-1.49A7.482 7.482 0 0 0 13 8zM8 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 8 0"/>
+        </svg>`;
+         updateSolveButtonState(); // Disable solve button while recording
+    };
+
+    recognition.onresult = (event) => {
+         let interimTranscript = '';
+         // Don't reset finalTranscript here if continuous is false, accumulate only on final result
+         // finalTranscript = ''; // <-- REMOVE OR COMMENT THIS LINE if continuous=false
+
+         for (let i = event.resultIndex; i < event.results.length; ++i) {
+             if (event.results[i].isFinal) {
+                 finalTranscript += event.results[i][0].transcript;
+             } else {
+                 interimTranscript += event.results[i][0].transcript;
+             }
+         }
+
+        // Update textarea. Append new text after the current content, replacing previous interim if any.
+         const currentText = mathProblemText.value;
+         const textWithoutPreviousInterim = currentText.endsWith(recognition.previousInterim)
+             ? currentText.substring(0, currentText.length - recognition.previousInterim.length)
+             : currentText; // Handle case where previous interim wasn't appended or changed
+
+         mathProblemText.value = textWithoutPreviousInterim + (finalTranscript || interimTranscript);
+
+         recognition.previousInterim = interimTranscript; // Store current interim
+
+        // Trigger input event to auto-resize textarea and update solve button state
+        mathProblemText.dispatchEvent(new Event('input'));
+        // updateSolveButtonState is already called by the 'input' event handler
+    };
+
+     recognition.onerror = (event) => {
+         console.error('Speech recognition error:', event.error);
+         // Specific error messages can be added based on event.error codes
+         let errorMessage = 'An error occurred during voice input.';
+         if (event.error === 'not-allowed') {
+             errorMessage = 'Permission denied. Please allow microphone access.';
+         } else if (event.error === 'no-speech') {
+             errorMessage = 'No speech detected.';
+         } else if (event.error === 'audio-capture') {
+              errorMessage = 'Could not capture audio. Check microphone.';
+         }
+         showAlert(`Voice input error: ${errorMessage}`, 'warning');
+
+         isRecording = false; // Stop recording state
+         startSpeechButton.classList.remove('recording');
+          startSpeechButton.title = 'Speak your math problem';
+          // Restore mic icon
+          startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
+                                <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
+                                <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/>
+                            </svg>`;
+         recognition.previousInterim = ''; // Clear previous interim text
+         updateSolveButtonState(); // Re-evaluate solve button state
+     };
+
+    recognition.onend = () => {
+        console.log('Speech recognition ended.');
+         isRecording = false; // Stop recording state
+        startSpeechButton.classList.remove('recording');
+         startSpeechButton.title = 'Speak your math problem';
+          // Restore mic icon
+          startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
+                                <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
+                                <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/>
+                            </svg>`;
+         recognition.previousInterim = ''; // Clear previous interim text
+         updateSolveButtonState(); // Re-evaluate solve button state
+    };
+
+    // Toggle speech recognition on button click
+    startSpeechButton.addEventListener('click', () => {
+        if (isRecording) {
+            recognition.stop(); // Stop if currently recording
+        } else {
+            finalTranscript = ''; // Reset final transcript on start
+            recognition.previousInterim = ''; // Reset previous interim on start
+            recognition.start(); // Start recording
+        }
+    });
+
+} else {
+    // SpeechRecognition is not supported in this browser
+    console.warn('Web Speech API is not supported in this browser.');
+    // Optionally hide or disable the speech button
+    startSpeechButton.style.display = 'none';
+     // Show info alert that feature isn't available
+     document.addEventListener('DOMContentLoaded', () => { // Ensure DOM is ready before showing alert
+          showAlert('Voice input is not supported in your browser.', 'info');
+     });
+}
+// Function to update the state of the Solve/Send button (NEW)
+function updateSolveButtonState() {
+     const problemTextValue = mathProblemText.value.trim();
+     const fileSelected = mathProblemFile.files.length > 0;
+     // Enable the button if there's text OR a file
+     if (problemTextValue || fileSelected) {
+         solveUnifiedButton.disabled = false;
+     } else {
+         solveUnifiedButton.disabled = true;
+     }
+     // Ensure it's not disabled while recording speech (if mic is supported and active)
+     if (isRecording) {
+         solveUnifiedButton.disabled = true; // Keep disabled during recording
+     }
+}
+
+// --- NEW: Function to parse and store solution steps ---
+function parseAndStoreSolutionSteps(solutionText) {
+    currentSolutionStepsArray = []; // Reset
+    if (!solutionText) return;
+
+    let formattedSteps = solutionText.trim()
+        .split('\n')
+        .filter(line => line.trim() !== '')
+        .join('\n');
+
+    // This regex ensures we capture "Step X:" or "Final Answer:" along with their content
+    // It looks for "### " followed by "Step " and a number, or "Final Answer", then ":"
+    // and captures everything until the next similar pattern or end of string.
+    const stepSplitRegex = /(?=### (?:Step \d+|Final Answer):)/;
+
+    formattedSteps = formattedSteps
+        .split(stepSplitRegex) // Split by the lookahead assertion
+        .map(part => part.trim())
+        .filter(part => part.length > 0) // Remove empty parts
+        .map((part) => {
+            let stepHtml = '';
+            if (part.startsWith('### Step ')) {
+                const match = part.match(/^### Step (\d+):([\s\S]*)/);
+                if (match) {
+                    const stepNum = match[1];
+                    const stepContent = match[2].trim();
+                    stepHtml = `<div class="step interactive-step fade-in" data-step-number="${stepNum}" style="cursor: pointer;" title="Click to clarify this step"><h5>Step ${stepNum}:</h5><div class="step-content">${stepContent}</div></div>`;
+                }
+            } else if (part.startsWith('### Final Answer:')) {
+                const finalContent = part.substring('### Final Answer:'.length).trim();
+                stepHtml = `<div class="final-answer fade-in"><strong>Final Answer:</strong><div class="final-answer-content">${finalContent}</div></div>`;
+            } else {
+                // This case should ideally not happen if the input format is strictly "### Step X:" or "### Final Answer:"
+                // But as a fallback, wrap unrecognized parts in a paragraph.
+                stepHtml = `<p>${part}</p>`;
+            }
+            // Basic markdown (bold, italic) - keep this transformation here
+            stepHtml = stepHtml.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+            return stepHtml;
+        });
+    currentSolutionStepsArray = formattedSteps;
+}
+
+// --- NEW: Function to render solution steps based on mode ---
+function renderSolutionSteps(mode) {
+    if (!solutionOutput || currentSolutionStepsArray.length === 0) {
+        if (nextStepButton) nextStepButton.style.display = 'none';
+        solutionOutput.innerHTML = '<p class="text-muted">Solution steps will appear here...</p>'; // Or keep previous content
+        return;
+    }
+
+    if (mode === 'all' || (displayAllStepsRadio && displayAllStepsRadio.checked)) {
+        solutionOutput.innerHTML = currentSolutionStepsArray.join('');
+        if (nextStepButton) nextStepButton.style.display = 'none';
+    } else if (mode === 'one-by-one' || (displayOneByOneRadio && displayOneByOneRadio.checked)) {
+        // Display steps up to and including the currentStepIndex
+        solutionOutput.innerHTML = currentSolutionStepsArray.slice(0, currentStepIndex + 1).join('');
+
+        if (currentStepIndex < currentSolutionStepsArray.length - 1) {
+            if (nextStepButton) nextStepButton.style.display = 'block';
+        } else {
+            if (nextStepButton) nextStepButton.style.display = 'none';
+        }
+    }
+    renderMathJax(solutionOutput);
+}
+        // --- Display Solution Function ---
+    // --- MODIFIED: Display Solution Function ---
+function displaySolution(solutionText, problemTextUsed, identifiedConceptsString, fileURIUsed = null) {
+    currentProblemText = problemTextUsed;
+    currentProblemFileURI = fileURIUsed;
+    currentSolutionText = solutionText;
+    lastIdentifiedConceptsString = identifiedConceptsString;
+
+    // NEW: Handle displaying the uploaded question image
+    if (lastUploadedFileWasImage && lastUploadedImageSrc) {
+        questionImageElement.src = lastUploadedImageSrc;
+        uploadedQuestionImagePreviewArea.style.display = 'block';
+    } else {
+        uploadedQuestionImagePreviewArea.style.display = 'none';
+        questionImageElement.src = '#'; // Clear src
+    }
+
+    // Parse and store steps
+    parseAndStoreSolutionSteps(solutionText);
+    currentStepIndex = 0; // Reset for new solution
+
+    // Render steps based on the default radio button ("All at Once")
+    // Ensure radio buttons are checked before calling renderSolutionSteps if relying on their state
+    if (displayAllStepsRadio && displayAllStepsRadio.checked) {
+         renderSolutionSteps('all');
+    } else if (displayOneByOneRadio && displayOneByOneRadio.checked) { // If 'one-by-one' was somehow pre-selected
+         renderSolutionSteps('one-by-one');
+    } else { // Default fallback
+        renderSolutionSteps('all');
+    }
+
+
+    copySolutionButton.style.display = 'block';
+
+    if (solutionText) { // Check if solutionText itself is non-empty
+        practiceSection.style.display = 'block';
+        conceptsRefresherSection.style.display = 'block';
+        practiceSection.classList.add('fade-in');
+        practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' to get practice problems based on the solved question.</p>';
+        identifiedConceptsList.innerHTML = identifiedConceptsString ? `<strong>Concepts found:</strong> ${escapeHtml(identifiedConceptsString)}` : '<strong>Concepts found:</strong> Not identified.';
+        renderMathJax(practiceOutput);
+        if(practiceLoading) practiceLoading.style.display = 'none';
+    } else {
+        practiceSection.style.display = 'none';
+        conceptsRefresherSection.style.display = 'none'; // Also hide concepts if no solution
+        solutionOutput.innerHTML = '<p class="text-danger">No solution steps were found in the response.</p>';
+    }
+}
+// --- NEW: Quick Refresher Button Click Listener ---
+quickRefresherButton.addEventListener('click', async () => {
+    clearAlert(conceptsRefresherAlert); // Clear alerts in the concepts section
+
+    // Use the stored string value for the check and the payload
+    if (!lastIdentifiedConceptsString || lastIdentifiedConceptsString.trim() === '' || lastIdentifiedConceptsString.includes('Not identified.')) {
+        showAlert("No specific concepts were identified for this problem.", "info", conceptsRefresherAlert);
+        return;
+    }
+
+    // Update modal title (initially generic, will update with concept name from backend)
+    refresherModalLabel.textContent = `Quick Refresher for Key Concepts`;
+
+    // Show loading state in modal
+    showRefresherLoading();
+
+    // Show the modal
+    refresherModal.show();
+
+    // Fetch refresher content from backend
+    // Send the identified concepts STRING to the backend
+    const payload = { concepts: lastIdentifiedConceptsString }; // Use the global string variable
+
+    try {
+        const response = await fetch(REFRESHER_API_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        let responseData;
+        try {
+            // Try parsing JSON first
+            responseData = await response.json();
+            if (!response.ok) {
+                // If response is not OK but we got JSON, it's a backend error payload
+                 console.error("Backend Refresher Error Response:", responseData);
+                 throw new Error(responseData.error || responseData.message || `HTTP error! Status: ${response.status}`);
+            }
+        } catch (jsonError) {
+             // If JSON parsing failed, read as text to see raw error or content
+             const rawText = await response.text();
+             console.error("Failed to parse JSON response from /refresher:", jsonError);
+             console.error("Raw response text:", rawText);
+             // Throw a more informative error
+             if (!response.ok) {
+                  // If response status was not OK, it's likely a server error before JSON was formed
+                  throw new Error(`Server error (${response.status}): ${rawText.substring(0, 200) || 'Could not read error response.'}`);
+             } else {
+                  // If response status was OK but JSON failed, the AI might have returned malformed content
+                  throw new Error(`Received invalid JSON from server. Raw content: ${rawText.substring(0, 500)}...`);
+             }
+        }
+
+
+         // Check if backend returned content (assuming success status now)
+        if (responseData.concept_name || responseData.concept_description || responseData.example || (responseData.solved_questions && responseData.solved_questions.length > 0)) {
+
+            // Update modal title with concept name from backend if available
+             if (responseData.concept_name) {
+                  refresherModalLabel.textContent = `Quick Refresher: ${escapeHtml(responseData.concept_name)}`;
+             } else {
+                  // Keep the generic title if backend didn't provide a name
+                   refresherModalLabel.textContent = `Quick Refresher for Key Concepts`;
+             }
+
+            // Populate modal content
+            refresherConceptDescription.innerHTML = responseData.concept_description ? escapeHtml(responseData.concept_description) : '<p class="text-muted">Description not available.</p>'; // Use escapeHtml
+            refresherExample.innerHTML = responseData.example ? escapeHtml(responseData.example) : '<p class="text-muted">Example not available.</p>'; // Use escapeHtml
+
+            // Correctly handle the array of solved questions (array of objects)
+            if (responseData.solved_questions && Array.isArray(responseData.solved_questions) && responseData.solved_questions.length > 0) {
+                // Map each question object to HTML
+                const solvedQuestionsHtml = responseData.solved_questions.map((q_obj, index) => {
+                    // Check if q_obj is a valid object with 'question' and 'solution' keys
+                    if (q_obj && typeof q_obj === 'object' && q_obj.question && q_obj.solution) {
+                        // Format the question and solution
+                        return `
+                            <p><strong>Problem ${index + 1}:</strong> ${escapeHtml(q_obj.question)}</p>
+                            <p><strong>Solution:</strong> ${escapeHtml(q_obj.solution)}</p>
+                            ${index < responseData.solved_questions.length - 1 ? '<hr style="margin: 15px 0;">' : ''} <!-- Add a separator -->
+                        `;
+                    } else {
+                        console.warn("Received unexpected format for a solved question object:", q_obj);
+                        return '<p class="text-warning">Could not display solved question in expected format.</p>';
+                    }
+                }).join(''); // Join all question HTML blocks
+
+                refresherSolvedQuestions.innerHTML = solvedQuestionsHtml;
+            } else {
+                refresherSolvedQuestions.innerHTML = '<p class="text-muted">Solved questions not available.</p>';
+            }
+
+
+            // Render MathJax in the modal content areas (now include description area)
+            renderMathJax(refresherConceptDescription);
+            renderMathJax(refresherExample);
+            renderMathJax(refresherSolvedQuestions);
+
+            // Show content and hide error
+            refresherContent.style.display = 'block';
+            refresherError.style.display = 'none';
+
+        } else {
+             // Backend returned OK status, but no meaningful content
+             refresherContent.style.display = 'none'; // Hide content areas
+             refresherError.style.display = 'block'; // Show error area (using it for info here)
+             refresherError.classList.remove('alert-danger'); // Change to info/warning style
+             refresherError.classList.add('alert-info');
+             refresherError.innerHTML = 'No specific refresher content found for these concepts.';
+        }
+
+
+    } catch (error) {
+        console.error('Error fetching refresher content:', error);
+        refresherContent.style.display = 'none'; // Hide content areas
+        refresherError.style.display = 'block'; // Show error area
+         refresherError.classList.remove('alert-info');
+         refresherError.classList.add('alert-danger'); // Ensure it's red for errors
+        refresherError.innerHTML = `Failed to load refresher content: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : escapeHtml(error.message)}`;
+    } finally {
+        hideRefresherLoading(); // Hide loading spinner
+         // hideButtonLoading(quickRefresherButton); // Hide button loading if you added it
+    }
+});
+        practiceSlider.addEventListener('input', () => {
+            practiceCount.textContent = practiceSlider.value;
+        });
+
+        // --- Generate Practice Problems Button Click Handler ---
+        generatePracticeButton.addEventListener('click', async () => {
+            clearAlert(); // Clear main alerts
+
+            // We need *either* the original problem text *or* the raw solution text
+            // to generate practice problems effectively based on context.
+            // Sending the raw solution text is often more reliable for the backend AI
+            // to understand the concepts involved.
+            const contextText = currentSolutionText; // Use the raw solution text as context
+
+            if (!contextText) {
+                showAlert("Cannot generate practice problems: No problem context available.", "warning");
+                return;
+            }
+
+            const numberOfProblems = parseInt(practiceSlider.value, 10);
+
+            practiceOutput.innerHTML = ''; // Clear previous problems
+            practiceLoading.style.display = 'block'; // Show loading indicator
+            showButtonLoading(generatePracticeButton, 'Generating...');
+
+            const payload = {
+                contextText: contextText, // Send the raw solution text as context
+                numberOfProblems: numberOfProblems
+            };
+
+            try {
+                 const response = await fetch(PRACTICE_API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(responseData.error || responseData.message || `HTTP error! Status: ${response.status}`);
+                }
+
+                if (responseData.practice_text) {
+                    // Display problems, use innerHTML for potential formatting/newlines
+                    // practiceOutput.innerHTML = responseData.practice_text;
+                    // Split problems - Adjust regex based on how backend formats the list (e.g., "1.", "2.")
+                 // This regex looks for a number, dot, optional space, then captures the rest until the next number/dot or end of string
+                const problemRegex = /(\d+\.\s*?)([\s\S]*?)(?=\n\d+\.\s*|\n*$)/g;
+                let match;
+                let problemsFound = false;
+
+                while ((match = problemRegex.exec(responseData.practice_text)) !== null) {
+                    problemsFound = true;
+                    const problemNumber = match[1].trim(); // "1.", "2."
+                    const problemText = match[2].trim(); // The actual problem text
+
+                    const problemDiv = document.createElement('div');
+                    problemDiv.classList.add('practice-problem', 'interactive-practice', 'fade-in');
+                    // Store the raw problem text (including number) for the modal
+                    problemDiv.dataset.problemText = `${problemNumber} ${problemText}`;
+
+                    problemDiv.innerHTML = `
+                        <span class="problem-number">${escapeHtml(problemNumber)}</span>
+                        <span>${escapeHtml(problemText)}</span>
+                    `; // Display number and text separately if needed
+
+                    practiceOutput.appendChild(problemDiv);
+                }
+
+                 // Fallback if regex doesn't match - display raw text but maybe wrap it
+                 if (!problemsFound) {
+                    console.warn("Could not parse individual practice problems. Displaying raw text.");
+                     // Wrap raw text in a single non-interactive div as a fallback
+                    const rawDiv = document.createElement('div');
+                    rawDiv.classList.add('practice-problem'); // Use same base style
+                    rawDiv.textContent = responseData.practice_text; // Use textContent to avoid potential HTML injection
+                    practiceOutput.appendChild(rawDiv);
+                 }
+
+                renderMathJax(practiceOutput); // Render math in the practice problems
+                // ------------------------------------------------------
+
+            } else {
+                practiceOutput.innerHTML = '<p class="text-muted">No practice problems were generated.</p>';
+                // throw new Error("Received no practice problems text from the server.");
+            }
+
+        } catch (error) {
+            console.error('Error generating practice problems:', error);
+            showAlert(`Failed to generate practice problems: ${error.message}`, 'danger');
+            practiceOutput.innerHTML = '<p class="text-danger">Could not load practice problems.</p>';
+        } finally {
+            practiceLoading.style.display = 'none'; // Hide loading indicator
+            hideButtonLoading(generatePracticeButton);
+        }
+    });
+
+// --- Practice Problem Click Listener (NEW - CHECK THIS) ---
+practiceOutput.addEventListener('click', (event) => {
+            console.log("Clicked inside practice output area."); // Debug log 1
+            // Use closest to find the interactive practice div, starting from the actual clicked element
+            const practiceProblemDiv = event.target.closest('.interactive-practice');
+
+            if (practiceProblemDiv) {
+                console.log("Clicked on an interactive practice problem div:", practiceProblemDiv); // Debug log 2
+                // hideAvatarHelper(); // Optional: Hide avatar
+
+                const problemText = practiceProblemDiv.dataset.problemText;
+                 console.log("Problem text from data attribute:", problemText); // Debug log 3
+
+                 if (!problemText) {
+                     console.error("Could not find problem text in data attribute.");
+                     showAlert("Could not load problem for checking.", "warning", practiceModalAlertBox); // Show alert in modal
+                     return;
+                 }
+
+
+                // Populate the modal
+                modalPracticeProblemContent.textContent = problemText; // Display the raw text
+                 modalPracticeProblemTextHidden.value = problemText; // Store for submission
+                 renderMathJax(modalPracticeProblemContent); // Render math in the modal display
+
+
+                // Reset modal state
+                 practiceSolutionFile.value = ''; // Clear file input
+                 practiceSelectedFileInfo.textContent = ''; // Clear file info text
+                 practiceCheckResult.style.display = 'none'; // Hide result area
+                 practiceCheckOutput.innerHTML = ''; // Clear previous result
+                 clearAlert(practiceModalAlertBox); // Clear modal alerts
+
+
+                // Show the modal
+                console.log("Attempting to show practice check modal..."); // Debug log 4
+                practiceCheckModal.show();
+            } else {
+                 console.log("Click was not on an interactive practice problem div."); // Debug log 5
+            }
+        });
+
+// --- Practice Check Form Submit Listener (NEW) ---
+practiceCheckForm.addEventListener('submit', async (event) => {
+         event.preventDefault();
+         clearAlert(practiceModalAlertBox); // Clear previous modal alerts
+
+
+         const practiceProblemText = modalPracticeProblemTextHidden.value;
+         const solutionFile = practiceSolutionFile.files[0];
+
+
+         if (!solutionFile) {
+             showAlert('Please upload your solution file.', 'warning', practiceModalAlertBox);
+             return;
+         }
+         if (!practiceProblemText) {
+              showAlert('Error: Could not identify the practice problem text.', 'danger', practiceModalAlertBox);
+              return;
+         }
+
+         // Optional: File size check
+          const maxSizeMB = 10; // Example: 10MB limit
+          if (solutionFile.size > maxSizeMB * 1024 * 1024) {
+              showAlert(`File size exceeds the maximum limit of ${maxSizeMB}MB.`, 'warning', practiceModalAlertBox);
+              practiceSolutionFile.value = ''; // Clear invalid file
+              practiceSelectedFileInfo.textContent = '';
+              return;
+          }
+
+
+         showButtonLoading(submitPracticeCheckButton, 'Checking...');
+         practiceCheckResult.style.display = 'none'; // Hide previous result
+         practiceCheckOutput.innerHTML = '';
+
+
+         const formData = new FormData();
+         formData.append('practiceProblem', practiceProblemText);
+         formData.append('solutionFile', solutionFile);
+
+
+         try {
+              const response = await fetch(CHECK_API_ENDPOINT, {
+                 method: 'POST',
+                 body: formData // No 'Content-Type' header needed for FormData, browser sets it
+             });
+
+
+              let responseData;
+              try {
+                   responseData = await response.json();
+              } catch (jsonError) {
+                  if (!response.ok) { const textError = await response.text(); throw new Error(`Server error (${response.status}): ${textError.substring(0, 200) || 'Could not read error response.'}`); }
+                  else { throw new Error("Received an unexpected non-JSON response from the check server."); }
+              }
+
+
+              if (!response.ok) {
+                   console.error("Backend Check Error Response:", responseData);
+                   throw new Error(responseData.error || responseData.message || `HTTP error! Status: ${response.status}`);
+              }
+
+
+              if (responseData.check_result) {
+                   // Display the feedback from the backend
+                   practiceCheckOutput.innerHTML = responseData.check_result; // Assuming backend sends HTML or text
+                   renderMathJax(practiceCheckOutput); // Render any math in the feedback
+                   practiceCheckResult.style.display = 'block'; // Show the result area
+              } else {
+                   throw new Error("Feedback missing in the server response.");
+              }
+
+
+         } catch (error) {
+              console.error('Error checking practice solution:', error);
+              showAlert(`Failed to check solution: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : error.message}`, 'danger', practiceModalAlertBox);
+              practiceCheckResult.style.display = 'none'; // Hide result area on error
+         } finally {
+              hideButtonLoading(submitPracticeCheckButton);
+         }
+     });
+
+
+      // --- Practice Check Modal File Input Listener (NEW) ---
+      practiceSolutionFile.addEventListener('change', () => {
+         if (practiceSolutionFile.files.length > 0) {
+             const file = practiceSolutionFile.files[0];
+             const fileName = file.name;
+              // Optional: Add file size check here (can be done on submit too)
+             practiceSelectedFileInfo.innerHTML = `Selected: <strong>${escapeHtml(fileName)}</strong> <a href="#" class="clear-practice-file ms-2 small" title="Remove file" onclick="event.preventDefault(); practiceSolutionFile.value=''; practiceSelectedFileInfo.innerHTML = '';">Remove</a>`;
+         } else {
+             practiceSelectedFileInfo.innerHTML = '';
+         }
+     });
+
+
+
+        // --- Step Clarification Click Listener ---
+        solutionOutput.addEventListener('click', (event) => {
+             const stepElement = event.target.closest('.interactive-step');
+             if (stepElement && currentSolutionText) {
+                  const stepNumber = stepElement.dataset.stepNumber;
+                  const stepContentElement = stepElement.querySelector('.step-content');
+                  const stepContentHTML = stepContentElement ? stepContentElement.innerHTML : '<p class="text-danger">Error: Could not extract step content.</p>';
+
+                  modalStepNumberInput.value = stepNumber;
+                  modalStepContent.innerHTML = stepContentHTML; // Display original step content
+                  clarificationQuestion.value = ''; // Clear previous question
+                  clarificationResult.style.display = 'none'; // Hide previous result
+                  clarificationOutput.innerHTML = ''; // Clear previous result content
+                  clearAlert(modalAlertBox); // Clear modal alerts
+
+                  const modalTitle = clarifyStepModalElement.querySelector('.modal-title');
+                  if (modalTitle) modalTitle.textContent = `Clarify Step ${stepNumber}`;
+
+                  renderMathJax(modalStepContent); // Render math in the modal step content
+                  clarifyStepModal.show();
+             }
+        });
+
+
+        // --- Clarification Form Submit Listener ---
+        clarificationForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            clearAlert(modalAlertBox);
+
+            const stepNumber = modalStepNumberInput.value;
+            const userQuestion = clarificationQuestion.value.trim();
+
+            if (!userQuestion) {
+                showAlert('Please enter your question.', 'warning', modalAlertBox);
+                return;
+            }
+            // Ensure context is available from the last solve
+            if (!currentSolutionText || !stepNumber) {
+                 showAlert('Missing solution context. Please solve a problem first.', 'danger', modalAlertBox);
+                 return;
+             }
+
+
+            showModalLoading();
+            clarificationResult.style.display = 'none'; // Hide previous result while loading
+            clarificationOutput.innerHTML = ''; // Clear previous result content
+
+
+            const payload = {
+                originalProblemText: currentProblemText, // Context from original input text
+                originalProblemFileURI: currentProblemFileURI, // Context from original file
+                fullSolution: currentSolutionText, // The complete generated solution
+                stepNumber: parseInt(stepNumber, 10), // The step number the user clicked on
+                userQuestion: userQuestion // The user's question
+            };
+
+            try {
+                 const response = await fetch(CLARIFY_API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                 const responseData = await response.json();
+
+                 if (!response.ok) {
+                    throw new Error(responseData.error || responseData.message || `HTTP error! Status: ${response.status}`);
+                 }
+
+                 if (responseData.clarification) {
+                    clarificationOutput.innerHTML = responseData.clarification;
+                    clarificationResult.style.display = 'block'; // Show the result area
+                    renderMathJax(clarificationOutput); // Render math in the clarification
+                 } else {
+                    throw new Error("No clarification content received.");
+                 }
+
+            } catch (error) {
+                 console.error('Error getting clarification:', error);
+                 showAlert(`Failed to get clarification: ${error.message}`, 'danger', modalAlertBox);
+                 clarificationOutput.innerHTML = '';
+                 clarificationResult.style.display = 'none'; // Hide result area on error
+            } finally {
+                 hideModalLoading();
+            }
+        });
+
+         // --- Copy Button Functionality ---
+        copySolutionButton.addEventListener('click', () => {
+             // Use textContent to get plain text without HTML/MathJax spans
+             const textToCopy = solutionOutput.innerText || solutionOutput.textContent || '';
+
+             
+
+             navigator.clipboard.writeText(cleanedText).then(() => {
+                 const originalText = copySolutionButton.textContent;
+                 copySolutionButton.textContent = 'Copied!';
+                 copySolutionButton.disabled = true; // Prevent double clicking immediately
+                 setTimeout(() => {
+                     copySolutionButton.textContent = originalText;
+                     copySolutionButton.disabled = false;
+                 }, 2000); // Revert text and enable after 2 seconds
+             }).catch(err => {
+                 console.error('Failed to copy text: ', err);
+                 showAlert('Failed to copy solution text.', 'warning'); // Show alert on failure
+             });
+        });
+
+
+        // --- AMA Chatbot Functions ---
+
+        // Function to render chat messages from history
+        function renderChatHistory() {
+            chatWindow.innerHTML = ''; // Clear current content
+
+            if (conversationHistory.length === 0) {
+                // --- Show sample questions if no conversation yet ---
+                chatWindow.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h4 style="color: #007bff; margin-bottom: 20px; font-weight: 600;">🧠 Ask Professor Owl Anything About Math Theory!</h4>
+                        <p class="text-muted mb-4">Examples of what you can ask:</p>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                            <div class="sample-question" onclick="fillSampleQuestion('Who was Pythagoras?')">Who was Pythagoras?</div>
+                            <div class="sample-question" onclick="fillSampleQuestion('Explain complex numbers')">Explain complex numbers</div>
+                            <div class="sample-question" onclick="fillSampleQuestion('What is the origin of the equals sign?')">What is the origin of the equals sign?</div>
+                            <div class="sample-question" onclick="fillSampleQuestion('Tell me about Euclid\'s Elements')">Tell me about Euclid's Elements</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // --- Show normal conversation ---
+                conversationHistory.forEach(message => {
+                    if (message.role === 'user') {
+                        chatWindow.innerHTML += `
+                            <div class="user-message">
+                                <div>${escapeHtml(message.content)}</div>
+                            </div>
+                        `;
+                    } else if (message.role === 'bot') {
+                         // Optional: Basic markdown to HTML for bot messages (bold, italic, code)
+                         let botContent = message.content
+                             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                             .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+                             .replace(/`(.*?)`/g, '<code>$1</code>'); // Inline code (basic)
+
+                        chatWindow.innerHTML += `
+                            <div class="bot-message">
+                                <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Owl Avatar">
+                                <div><b>Professor Owl:</b> ${botContent}</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            // Scroll to bottom smoothly
+            chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Function to fill the input with a sample question
+        function fillSampleQuestion(questionText) {
+            amaInput.value = questionText;
+            amaInput.focus(); // Put cursor in the input
+        }
+
+        // Function to send message
+        async function sendQuestion() {
+            const question = amaInput.value.trim();
+
+            if (!question) return;
+
+            // Add user message to history
+            conversationHistory.push({ role: 'user', content: question });
+
+            // Render history (includes the new user message)
+            renderChatHistory();
+
+            amaInput.value = ''; // Clear input field
+            sendButton.disabled = true; // Disable button while processing
+
+            // Show professor is typing with animated dots...
+            const typingIndicator = document.createElement('div');
+            typingIndicator.id = 'typing';
+            typingIndicator.innerHTML = `
+                <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Owl Avatar">
+                <div><span id="typing-text">Professor Owl is thinking</span><span id="dots">.</span></div>
+            `;
+            chatWindow.appendChild(typingIndicator);
+            chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
+
+            // --- Animated Dots Logic ---
+            let dotsCount = 1;
+            const typingInterval = setInterval(() => {
+                dotsCount = (dotsCount % 3) + 1; // cycle 1 -> 2 -> 3 -> 1
+                document.getElementById('dots').innerText = '.'.repeat(dotsCount);
+            }, 400); // Adjust speed
+
+
+            try {
+                const response = await fetch(AMA_API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // Send the full conversation history including the *latest* user message
+                    body: JSON.stringify({ history: conversationHistory }),
+                });
+
+                const data = await response.json();
+
+                // Remove typing animation and indicator
+                clearInterval(typingInterval);
+                if (document.getElementById('typing')) {
+                    document.getElementById('typing').remove();
+                }
+
+                if (response.ok && data.answer) {
+                    // Add professor's reply to history
+                    conversationHistory.push({ role: 'bot', content: data.answer });
+                    // Render history (includes the new bot message)
+                    renderChatHistory();
+
+                } else {
+                    // Handle server-side errors or empty answer
+                    const errorMsg = data.error || "Professor Owl couldn't find an answer. Try again!";
+                    chatWindow.innerHTML += `
+                        <div class="bot-message" style="color: red;"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Owl Avatar"><div><b>Professor Owl:</b> ❌ ${escapeHtml(errorMsg)}</div></div>
+                    `;
+                    chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
+                }
+
+            } catch (error) {
+                console.error("Error in AMA chat:", error);
+                // Remove typing animation and indicator
+                clearInterval(typingInterval);
+                if (document.getElementById('typing')) {
+                    document.getElementById('typing').remove();
+                }
+                // Display network/client-side error
+                chatWindow.innerHTML += `
+                   <div class="bot-message" style="color: red;"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Owl Avatar"><div><b>Professor Owl:</b> 🚫 Error contacting the server! Please check your connection or try again.</div></div>
+                `;
+                chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
+            } finally {
+                sendButton.disabled = false; // Re-enable button
+            }
+        }
+
+
+        // Optional: Allow sending message by pressing Enter key
+        amaInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission if in a form
+                sendQuestion();
+            }
+        });
+
+        // --- Initial setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- NEW: Event Listeners for Radio Buttons and Next Step Button ---
+                    if (displayAllStepsRadio) {
+                        displayAllStepsRadio.addEventListener('change', () => {
+                            if (displayAllStepsRadio.checked) {
+                                currentStepIndex = 0; // Reset index when switching to "all"
+                                renderSolutionSteps('all');
+                            }
+                        });
+                    }
+
+                    if (displayOneByOneRadio) {
+                        displayOneByOneRadio.addEventListener('change', () => {
+                            if (displayOneByOneRadio.checked) {
+                                // currentStepIndex is preserved or reset if starting fresh
+                                // If currentSolutionStepsArray is populated, render based on currentStepIndex
+                                renderSolutionSteps('one-by-one');
+                            }
+                        });
+                    }
+
+                    if (nextStepButton) {
+                        nextStepButton.addEventListener('click', () => {
+                            if (currentStepIndex < currentSolutionStepsArray.length - 1) {
+                                currentStepIndex++;
+                                renderSolutionSteps('one-by-one'); // Re-render to show next step
+                            }
+                        });
+                    }
+             // Initial textarea resize
+             setTimeout(() => { if(mathProblemText) mathProblemText.dispatchEvent(new Event('input')); }, 100);
+             // Set initial slider count display
+             if(practiceSlider && practiceCount) practiceCount.textContent = practiceSlider.value;
+             // Render initial sample questions in AMA chat
+             renderChatHistory();
+
+             // Add fade-in animation class to sections after they are likely in view (simple approach)
+             // More complex solutions would use Intersection Observer API
+             const sections = document.querySelectorAll('section');
+             sections.forEach(section => {
+                 section.classList.add('fade-in');
+                 // Note: This applies animation on page load. For scrolling animations, use Intersection Observer.
+             });
+// --- Add this line to hide the practice loading indicator on page load ---
+if (practiceLoading) {
+                 practiceLoading.style.display = 'none';
+            }
+
+           // NEW: Initialize step display mode (optional, HTML default is usually fine)
+    if (displayAllStepsRadio && displayAllStepsRadio.checked) {
+         if (nextStepButton) nextStepButton.style.display = 'none';
+    }
+    // Ensure question image preview is hidden initially
+    if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
+
+
+    updateSolveButtonState();
+            // --- End of added line ---
+        });
+// ... inside DOMContentLoaded listener ...
+
+// NEW: Hide the concepts section on load
+if (conceptsRefresherSection) {
+    conceptsRefresherSection.style.display = 'none';
+}
+
+// ... rest of existing DOMContentLoaded logic ...
+        // Smooth scrolling for anchor links
+         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+             anchor.addEventListener('click', function (e) {
+                 e.preventDefault();
+
+                 document.querySelector(this.getAttribute('href')).scrollIntoView({
+                     behavior: 'smooth'
+                 });
+             });
+         });
+
+    </script>
+
+</body>
+</html>
