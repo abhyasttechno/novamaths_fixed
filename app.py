@@ -79,8 +79,8 @@ CORS(app, resources={r"/solve-math": {"origins": "*"}, r"/clarify-step": {"origi
 # --- Hardcoding keys like this is insecure and should only be for quick local testing ---
 
 
-# API_KEY = os.environ.get('GEMINI_API_KEY')
-os.environ['GOOGLE_API_KEY'] = API_KEY
+API_KEY = "AIzaSyBNPrThRfqzW_lJpFd1F9lyepRM7q1SghU"
+# API_KEY = os.environ['GOOGLE_API_KEY']
 client = None # Initialize as None
 
 if not API_KEY:
@@ -935,7 +935,7 @@ def submit_feedback():
 def index():
     # You could pass data to the template here if needed
     # For this example, we just render the static template
-    return render_template('index.html')
+    return render_template('dashboard.html')
 
 
 # --- Run the Flask App ---
